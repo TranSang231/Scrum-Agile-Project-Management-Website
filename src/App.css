@@ -1,0 +1,13 @@
+body {
+  background-color: #f4f5f7 !important;
+}
+.card {
+  border-radius: 8px;
+}
+.btn-primary {
+  background-color: #0052cc !important;
+  border: none;
+}
+.btn-primary:hover {
+  background-color: #0747a6 !important;
+}
