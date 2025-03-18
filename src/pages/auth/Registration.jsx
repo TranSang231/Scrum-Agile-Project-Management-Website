@@ -27,6 +27,13 @@ function Registration() {
     return () => clearInterval(interval);
   }, [isTimerActive, countdown]);
 
+  const passwordConditions = [
+    { text: 'Use 8 or more characters', isValid: password.length >= 8 },
+    { text: 'Use upper and lower case letters (e.g. Aa)', isValid: /[a-z]/.test(password) && /[A-Z]/.test(password) },
+    { text: 'Use a number (e.g. 1234)', isValid: /\d/.test(password) },
+    { text: 'Use a symbol (e.g. !@#$)', isValid: /[!@#$%^&*(),._?":{}|<>]/.test(password) }
+  ];
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -46,7 +53,6 @@ function Registration() {
   return (
     <div className="registration-container">
       <div className="header-links">
-        <div></div>
         <div className="auth-links">
           <span>Already have an account? <a className ="Login" href="/login">Log in</a></span>
           <div>
@@ -55,103 +61,112 @@ function Registration() {
         </div>
       </div>
 
-      <div className="form-container">
-        <div className="avatar-placeholder"></div>
+      <div className='form-wrapper'>
+        <div className="form-container">
+          <div className="avatar-placeholder"></div>
 
-        <div className="registration-form">
-          <h1>Create an account</h1>
-          <p className="form-subtitle">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lobortis maximus
-          </p>
+          <div className="registration-form">
+            <h1>Create an account</h1>
+            <p className="form-subtitle">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lobortis maximus
+            </p>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-            <div className="form-group">
-              <div className="password-label">
-                <label htmlFor="password">Password</label>
-                <button 
-                  type="button" 
-                  className="toggle-password"
-                  onClick={togglePasswordVisibility}
-                >
-                  <span className="eye-icon">
-                    <img 
-                      src={passwordVisible ? EyeOpen : EyeClose} 
-                      className="eye" 
-                      alt="eye icon" 
-                      style={{cursor: "pointer"}}
-                    />
-                  </span> {passwordVisible ? "Show" : "Hide"}
-                </button>
-              </div>
-              <input 
-                type={passwordVisible ? "text" : "password"} 
-                id="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="password-requirements">
-              <div className="requirement">
-                <span className="bullet">•</span> Use 8 or more characters
-              </div>
-              <div className="requirement">
-                <span className="bullet">•</span> Use upper and lower case letters (e.g. Aa)
-              </div>
-              <div className="requirement">
-                <span className="bullet">•</span> Use a number (e.g. 1234)
-              </div>
-              <div className="requirement">
-                <span className="bullet">•</span> Use a symbol (e.g. !@#$)
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="otp-header">
-                <label htmlFor="otpCode">OTP Code</label>
-                <div className="resend-container">
+              <div className="form-group">
+                <div className="password-label">
+                  <label htmlFor="password">Password</label>
                   <button 
                     type="button" 
-                    className="resend-button"
-                    onClick={handleResend}
-                    disabled={isTimerActive}
+                    className="toggle-password"
+                    onClick={togglePasswordVisibility}
                   >
-                    Send OTP?
+                    <span className="eye-icon">
+                      <img 
+                        src={passwordVisible ? EyeOpen : EyeClose} 
+                        className="eye" 
+                        alt="eye icon" 
+                        style={{cursor: "pointer"}}
+                      />
+                    </span> {passwordVisible ? "Show" : "Hide"}
                   </button>
-                  {isTimerActive && <span className="countdown-timer">({countdown}s)</span>}
                 </div>
+                <input 
+                  type={passwordVisible ? "text" : "password"} 
+                  id="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <ul className="password-requirements">
+                  {passwordConditions.map((condition, index) => (
+                    <li key={index} className={condition.isValid ? "valid" : "invalid"}>
+                      {condition.isValid ? "✅" : "❌"} {condition.text}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              {/* <input type="text" id="otpCode" className="otp-input" /> */}
-              <input 
-                type="text" 
-                id="otpCode" 
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value)}
-                required
-              />
-              <p className="otp-info">
-              Click "Send OTP" to receive the OTP code in your Gmail.
+
+              {/* <div className="password-requirements">
+                <div className="requirement">
+                  <span className="bullet">•</span> Use 8 or more characters
+                </div>
+                <div className="requirement">
+                  <span className="bullet">•</span> Use upper and lower case letters (e.g. Aa)
+                </div>
+                <div className="requirement">
+                  <span className="bullet">•</span> Use a number (e.g. 1234)
+                </div>
+                <div className="requirement">
+                  <span className="bullet">•</span> Use a symbol (e.g. !@#$)
+                </div>
+              </div> */}
+
+              <div className="form-group">
+                <div className="otp-header">
+                  <label htmlFor="otpCode">OTP Code</label>
+                  <div className="resend-container">
+                    <button 
+                      type="button" 
+                      className="resend-button"
+                      onClick={handleResend}
+                      disabled={isTimerActive}
+                    >
+                      Send OTP?
+                    </button>
+                    {isTimerActive && <span className="countdown-timer">({countdown}s)</span>}
+                  </div>
+                </div>
+                {/* <input type="text" id="otpCode" className="otp-input" /> */}
+                <input 
+                  type="text" 
+                  id="otpCode" 
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value)}
+                  required
+                />
+                <p className="otp-info">
+                Click "Send OTP" to receive the OTP code in your Gmail.
+                </p>
+              </div>
+
+              <button type="submit" className="register-button">Register</button>
+
+              <p className="terms-text">
+                By creating an account, you agree to the <a href="#terms">Terms of use</a> and <a href="#privacy">Privacy Policy</a>.
               </p>
-            </div>
-
-            <button type="submit" className="register-button">Register</button>
-
-            <p className="terms-text">
-              By creating an account, you agree to the <a href="#terms">Terms of use</a> and <a href="#privacy">Privacy Policy</a>.
-            </p>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
