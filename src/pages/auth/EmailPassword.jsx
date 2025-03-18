@@ -1,41 +1,40 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../../assets/styles/auth/EmailPassword.css"; // Import CSS mới
 
-const ResetPasswordPage = () => {
+const EmailPasswordPage = () => {
   const navigate = useNavigate();
 
   const handleResetClick = () => {
-    navigate("/otp"); // Chuyển hướng về trang đăng nhập
+    navigate("/otp"); // Chuyển hướng đến trang OTP
   };
 
   return (
-    <div className="d-flex vh-100">
-      <div className="container-fluid d-flex flex-column flex-md-row">
-        {/* Phần trắng bên trái */}
-        <div className="col-md-3 d-none d-md-block bg-white" style={{ minHeight: "100vh" }}></div>
+    <div className="reset-password-container">
+      {/* Phần trắng bên trái */}
+      <div className="left-section"></div>
 
-        {/* Phần bên phải */}
-        <div className="col-md-9 d-flex justify-content-center align-items-center" style={{ backgroundColor: "#EDF0F4" }}>
-          <div className="w-100 d-flex flex-column align-items-center">
-            <h2 className="text-center mb-4 text-dark">Forgot Password ?</h2>
-            <form style={{ width: "100%", maxWidth: "350px" }}>
-            <div className="mb-3">
-                <label className="form-label">Email</label>
-                <input type="email" className="form-control" placeholder="Enter your email" />
-              </div>
-              <button type="button" className="btn btn-dark w-100 rounded-pill" onClick={handleResetClick}>
-                Verify Email
-              </button>
-              <p className="text-center mt-3">
-                <a href="/" className="text-dark">Back to log in.</a>
-              </p>
-            </form>
-          </div>
+      {/* Phần bên phải */}
+      <div className="right-section">
+        <div className="reset-password-card">
+          <h2>Forgot Password ?</h2>
+          <form>
+            <div className="mb-3 text-start">
+              <label className="form-label">Email</label>
+              <input type="email" className="form-control" placeholder="Enter your email" />
+            </div>
+            <button type="button" className="btn btn-dark" onClick={handleResetClick}>
+              Reset Password
+            </button>
+            <p className="text-center mt-3">
+              <a href="/login" className="text-dark">Back to log in.</a>
+            </p>
+          </form>
         </div>
       </div>
     </div>
   );
 };
 
-export default ResetPasswordPage;
+export default EmailPasswordPage;
