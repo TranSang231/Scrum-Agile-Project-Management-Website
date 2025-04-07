@@ -1,0 +1,74 @@
+@use '../base/variables' as *;
+
+.otp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    label {
+        margin-right: 10px;
+        font-size: 0.875rem; // Added to reduce height
+    }
+
+    .resend-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.25rem; // Reduced from 10px
+    }
+}
+
+.resend-container .resend-button {
+    background: none;
+    border: none;
+    color: $dark-300;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 300;
+    font-size: 0.75rem; // Reduced from 0.875rem
+    transition: color 0.3s ease;
+    margin-right: 2px;
+    padding: 0;
+
+    &:hover {
+        color: $dark-800;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+.countdown-timer {
+    color: $dark-300;
+    margin-left: 0.25rem; // Reduced from 0.3125rem
+    font-size: 0.75rem; // Reduced from 0.875rem
+}
+
+.otp-info {
+    font-size: 0.75rem; // Reduced from 0.875rem
+    color: $dark-400;
+    margin-top: 0.25rem; // Reduced from 0.3125rem
+    word-wrap: break-word;
+    line-height: 1.2; // Added to reduce height
+}
+
+.button-group .back-button {
+    background: none;
+    border: none;
+    padding: 1rem 0;
+    text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    .otp-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .resend-container {
+        margin-top: 0.25rem; // Reduced from 0.3125rem
+        margin-bottom: 0.25rem; // Reduced from 0.5rem
+    }
+}

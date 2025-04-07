@@ -1,0 +1,40 @@
+@use '../base/variables' as *;
+
+.button {
+    font-size: 16px;
+    font-weight: 500;
+    background-color: $dark-500;
+    color: $dark-100;
+    border-radius: 20px;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    border: none; // Đảm bảo không có viền ngoài (nếu cần)
+
+    // Thêm hiệu ứng chuyển đổi mượt mà
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+        background-color: $dark-600;
+        color: $dark-100;
+        transform: scale(1.05); // Hiệu ứng phóng to nhẹ khi hover
+    }
+
+    &:focus {
+        outline: none; // Loại bỏ outline mặc định khi focus
+        box-shadow: 0 0 0 3px rgba($dark-500, 0.5); // Hiệu ứng focus dễ thấy hơn
+    }
+
+    &:active {
+        background-color: $dark-700; // Màu nền khi click
+        transform: scale(1); // Trở lại kích thước ban đầu khi click
+    }
+
+    // Disabled state
+    &.disabled {
+        background-color: $dark-300; // Màu nền khi disabled
+        color: $dark-200;
+        cursor: not-allowed; // Thay đổi con trỏ chuột khi bị vô hiệu hóa
+    }
+}

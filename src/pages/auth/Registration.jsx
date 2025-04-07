@@ -1,63 +1,117 @@
-import { useState, useEffect } from 'react';
-import '../../assets/styles/auth/Registration.css';
-import EyeClose from '../../assets/images/eye_close.png'; // Corrected path
-import EyeOpen from '../../assets/images/eye_open.png'; // Corrected path
+import { useState } from 'react';
+import axios from "axios";
+
+import { useTimer } from '../../hooks/useTimer';
+import { usePasswordValidation } from '../../hooks/usePasswordValidation';
+import { useMessage } from '../../hooks/useMessage';
+import { useVisibility } from '../../hooks/useVisibility';
+
+import { EmailForm} from '../../components/EmailForm';
+import { OtpForm } from '../../components/OTPForm';
+import { PasswordForm } from '../../components/PasswordForm';
+
+import '../../assets/styles/pages/auth/Registration.scss';
 
 function Registration() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  // State variables
+  const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: Password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [otpCode, setOtpCode] = useState('');
-  // const [isOpen, setIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    let interval = null;
-    
-    if (isTimerActive && countdown > 0) {
-      interval = setInterval(() => {
-        setCountdown(seconds => seconds - 1);
-      }, 1000);
-    } else if (countdown === 0) {
-      setIsTimerActive(false);
-      clearInterval(interval);
-    }
-    
-    return () => clearInterval(interval);
-  }, [isTimerActive, countdown]);
+  // Custom hook for password validation
+  const { isPasswordValid, passwordConditions } = usePasswordValidation(password);
+  const { message, messageType, setSuccessMessage, setErrorMessage } = useMessage();
+  const { countdown, isTimerActive, startTimer, stopTimer } = useTimer(60); // Start with 60 seconds countdown
+  const { isVisible: passwordVisible, toggleVisibility: togglePasswordVisibility } = useVisibility();
+  const { isVisible: passwordConfirmVisible, toggleVisibility: togglePasswordConfirmVisibility } = useVisibility();
 
-  const passwordConditions = [
-    { text: 'Use 8 or more characters', isValid: password.length >= 8 },
-    { text: 'Use upper and lower case letters (e.g. Aa)', isValid: /[a-z]/.test(password) && /[A-Z]/.test(password) },
-    { text: 'Use a number (e.g. 1234)', isValid: /\d/.test(password) },
-    { text: 'Use a symbol (e.g. !@#$)', isValid: /[!@#$%^&*(),._?":{}|<>]/.test(password) }
-  ];
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const handleSubmit = (e) => {
+  // Step 1: Submit email and request OTP
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', { email, password, otpCode });
+    setIsLoading(true); // Bắt đầu loading
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/auth/register/request-otp/", { email });
+      setSuccessMessage("OTP sent to your email");
+      startTimer(); // Start the countdown timer
+      setStep(2); // Move to OTP step
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setErrorMessage(error.response?.data?.error || "Failed to send OTP");
+    } finally {
+      setIsLoading(false); // Kết thúc loading
+    }
   };
 
-  const handleResend = () => {
-    console.log('Resend OTP requested');
-    // Start countdown timer
-    setCountdown(60);
-    setIsTimerActive(true);
+  // Step 2: Verify OTP and move to password step
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+
+    if (otpCode.includes('')) {
+      setErrorMessage("Please enter all OTP digits");
+      return;
+    }
+
+    const combinedOtp = otpCode.join(''); // Combine OTP digits into a single string
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/auth/register/verify-otp/", { email, otpCode: combinedOtp});
+      setSuccessMessage("OTP verified successfully");
+      setStep(3); // Move to password step
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      setErrorMessage(error.response?.data?.error || "Invalid OTP");
+    }
   };
-  
+
+  // Step 3: Complete registration with password
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
+
+    try {
+      await axios.post("http://127.0.0.1:8000/api/auth/register/complete/", { email, password, confirmPassword, otpCode });
+      alert("Registration successful!");
+      // Redirect to login page or dashboard
+      window.location.href = "/login";
+    } catch (err) {
+      console.log(err);
+      setErrorMessage(err.response?.data?.error || "Registration failed");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/register/request-otp/", { email });
+      setSuccessMessage(response.data.message || "OTP resent to your email");
+      startTimer(); // Restart the countdown timer
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setErrorMessage(error.response?.data?.error || "Failed to resend OTP");
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    setPasswordMatch(e.target.value === password);
+  };
+
   return (
     <div className="registration-container">
       <div className="header-links">
         <div></div>
         <div className="auth-links">
-          <span>Already have an account? <a className ="Login" href="/login">Log in</a></span>
+          <span>Already have an account? <a className="Login" href="/login">Log in</a></span>
           <div>
-            <a href="/email-password">Forget your user ID or password?</a>
+            <a href="/forgot-password">Forget your user ID or password?</a>
           </div>
         </div>
       </div>
@@ -66,110 +120,47 @@ function Registration() {
         <div className="avatar-placeholder"></div>
 
         <div className="registration-form">
-          <h1>Create an account</h1>
-          <p className="form-subtitle">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lobortis maximus
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <div className="password-label">
-                <label htmlFor="password">Password</label>
-                <button 
-                  type="button" 
-                  className="toggle-password"
-                  onClick={togglePasswordVisibility}
-                >
-                  <span className="eye-icon">
-                    <img 
-                      src={passwordVisible ? EyeOpen : EyeClose} 
-                      className="eye" 
-                      alt="eye icon" 
-                      style={{cursor: "pointer"}}
-                    />
-                  </span> {passwordVisible ? "Show" : "Hide"}
-                </button>
-              </div>
-              <input 
-                type={passwordVisible ? "text" : "password"} 
-                id="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <ul className="password-requirements">
-                {passwordConditions.map((condition, index) => (
-                  <li key={index} className={condition.isValid ? "valid" : "invalid"}>
-                    {condition.isValid ? "✅" : "❌"} {condition.text}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* <div className="password-requirements">
-              <div className="requirement">
-                <span className="bullet">•</span> Use 8 or more characters
-              </div>
-              <div className="requirement">
-                <span className="bullet">•</span> Use upper and lower case letters (e.g. Aa)
-              </div>
-              <div className="requirement">
-                <span className="bullet">•</span> Use a number (e.g. 1234)
-              </div>
-              <div className="requirement">
-                <span className="bullet">•</span> Use a symbol (e.g. !@#$)
-              </div>
-            </div> */}
-
-            <div className="form-group">
-              <div className="otp-header">
-                <label htmlFor="otpCode">OTP Code</label>
-                <div className="resend-container">
-                  <button 
-                    type="button" 
-                    className="resend-button"
-                    onClick={handleResend}
-                    disabled={isTimerActive}
-                  >
-                    Send OTP?
-                  </button>
-                  {isTimerActive && <span className="countdown-timer">({countdown}s)</span>}
-                </div>
-              </div>
-              {/* <input type="text" id="otpCode" className="otp-input" /> */}
-              <input 
-                type="text" 
-                id="otpCode" 
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value)}
-                required
-              />
-              <p className="otp-info">
-              Click "Send OTP" to receive the OTP code in your Gmail.
-              </p>
-            </div>
-
-            <button type="submit" className="register-button">Register</button>
-
-            <p className="terms-text">
-              By creating an account, you agree to the <a href="#terms">Terms of use</a> and <a href="#privacy">Privacy Policy</a>.
-            </p>
-          </form>
+          {step === 1 && <EmailForm {...{ 
+            headingTitle: "Create an account",
+            headingSubTitle:"Enter your email address to get started",
+            email, 
+            setEmail, 
+            handleEmailSubmit, 
+            message, 
+            messageType, 
+            isLoading }} />}
+          {step === 2 && <OtpForm {...{
+            email,
+            otpCode,
+            setOtpCode,
+            handleOtpSubmit,
+            isTimerActive,
+            countdown,
+            handleResendOtp,
+            message,
+            messageType,
+            isLoading
+          }} />}
+          {step === 3 && <PasswordForm {...{
+            password,
+            setPassword,
+            confirmPassword,
+            passwordMatch,
+            handleConfirmPasswordChange,
+            handlePasswordSubmit,
+            passwordVisible,
+            togglePasswordVisibility,
+            passwordConfirmVisible,
+            togglePasswordConfirmVisibility,
+            passwordConditions,
+            isPasswordValid,
+            message,
+            messageType
+          }} />}
         </div>
       </div>
     </div>
   );
-}
+} 
 
 export default Registration;
