@@ -1,0 +1,63 @@
+/* Left Navigation Sidebar */
+.navbar-left {
+    width: 210px;
+    height: 100vh;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #ffffff;
+  }
+  
+  .navbar-content {
+    padding: 80px 0;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #64748b;
+    transition: background-color 0.2s, color 0.2s;
+  }GIT
+  
+  .nav-item:hover {
+    background-color: #f8fafc;
+  }
+  
+  .nav-item.active {
+    color: #6366f1;
+    background-color: rgba(99, 102, 241, 0.1);
+    position: relative;
+  }
+  
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-color: #6366f1;
+  }
+  
+  .nav-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .nav-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .navbar-footer {
+    padding-bottom: 20px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+  }
