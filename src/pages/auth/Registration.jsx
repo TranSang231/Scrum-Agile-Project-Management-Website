@@ -27,6 +27,13 @@ function Registration() {
     return () => clearInterval(interval);
   }, [isTimerActive, countdown]);
 
+  const passwordConditions = [
+    { text: 'Use 8 or more characters', isValid: password.length >= 8 },
+    { text: 'Use upper and lower case letters (e.g. Aa)', isValid: /[a-z]/.test(password) && /[A-Z]/.test(password) },
+    { text: 'Use a number (e.g. 1234)', isValid: /\d/.test(password) },
+    { text: 'Use a symbol (e.g. !@#$)', isValid: /[!@#$%^&*(),._?":{}|<>]/.test(password) }
+  ];
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -50,7 +57,7 @@ function Registration() {
         <div className="auth-links">
           <span>Already have an account? <a className ="Login" href="/login">Log in</a></span>
           <div>
-            <a href="#forgot">Forget your user ID or password?</a>
+            <a href="/email-password">Forget your user ID or password?</a>
           </div>
         </div>
       </div>
@@ -101,9 +108,16 @@ function Registration() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <ul className="password-requirements">
+                {passwordConditions.map((condition, index) => (
+                  <li key={index} className={condition.isValid ? "valid" : "invalid"}>
+                    {condition.isValid ? "✅" : "❌"} {condition.text}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="password-requirements">
+            {/* <div className="password-requirements">
               <div className="requirement">
                 <span className="bullet">•</span> Use 8 or more characters
               </div>
@@ -116,7 +130,7 @@ function Registration() {
               <div className="requirement">
                 <span className="bullet">•</span> Use a symbol (e.g. !@#$)
               </div>
-            </div>
+            </div> */}
 
             <div className="form-group">
               <div className="otp-header">
