@@ -113,7 +113,7 @@ export const OtpForm = ({
           <label htmlFor="otpCode">OTP Code</label>
           <div className="resend-container">
             <button 
-              type="button" 
+              type="button button--form" 
               className="resend-button"
               onClick={handleResendOtp}
               disabled={isTimerActive}
@@ -138,7 +138,7 @@ export const OtpForm = ({
         <button type="button" className="back-button" onClick={() => setStep(1)}>
           Back
         </button>
-        <button type="submit" className="button" disabled={isLoading}>
+        <button type="submit" className="button button--form" disabled={isLoading}>
           {isLoading ? <span className="spinner"></span> : "Verify"}
         </button>
       </div>

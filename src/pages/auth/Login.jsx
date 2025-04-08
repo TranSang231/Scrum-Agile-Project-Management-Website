@@ -79,7 +79,7 @@ const Login = () => {
 
                         <button 
                           type="submit"
-                          className="button"
+                          className="button button--form"
                           disabled={isLoading}
                         >
                             {isLoading ? <span className="spinner-border spinner-border-sm me-2"></span> : ""} 

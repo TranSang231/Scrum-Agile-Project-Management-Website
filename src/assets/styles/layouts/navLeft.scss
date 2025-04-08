@@ -1,0 +1,64 @@
+@use '../base/variables' as *;
+
+.navbar-left {
+    width: 210px;
+    height: 100vh;
+    border-right: 1px solid $primary-color;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: $secondary-color;
+  }
+  
+  .navbar-content {
+    padding: 80px 0;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: $fifthary-color;
+    transition: background-color 0.2s, color 0.2s;
+  }GIT
+  
+  .nav-item:hover {
+    background-color: $primary-color;
+  }
+  
+  .nav-item.active {
+    color: $fourthary-color;
+    background-color: $thirdary-color;
+    position: relative;
+  }
+  
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background-color: $fourthary-color;
+  }
+  
+  .nav-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .nav-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .navbar-footer {
+    padding-bottom: 20px;
+    border-top: 1px solid $primary-color;
+    padding-top: 20px;
+  }
