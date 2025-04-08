@@ -6,6 +6,7 @@ import ForgotPasswordPage from "../pages/auth/ForgotPassword.jsx";
 import EmailPasswordPage from "../pages/auth/EmailPassword.jsx";
 import OTPPage from "../pages/auth/OtpPage.jsx";
 import Registration from '../pages/auth/Registration.jsx';
+import BacklogForm from '../pages/backlog/backlog.jsx';
 
 function AppRouter() {
   return (
@@ -16,6 +17,7 @@ function AppRouter() {
             <Route path="/email-password" element={<EmailPasswordPage />} />
             <Route path="/otp" element={<OTPPage />} />
             <Route path="/reset-password" element={<ForgotPasswordPage />} />
+            <Route path="/backlog" element={<BacklogForm />} />
         </Routes>
     </Router>
   );
