@@ -2,7 +2,7 @@ import React from 'react';
 import "../../assets/styles/layouts/navLeft.scss"; 
 import { useNavigate } from 'react-router-dom';
 
-const NavbarLeft = ({ activeView, setActiveView }) => {
+const NavLeft = ({ activeView, setActiveView }) => {
   const navigate = useNavigate(); 
   
   const menuItems = [
@@ -93,4 +93,4 @@ const NavbarLeft = ({ activeView, setActiveView }) => {
   );
 };
 
-export default NavbarLeft;
+export default NavLeft;

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import '../assets/styles/components/taskCard.scss';
 import DropdownMenu from './DropDownMenu';
 import EditTaskForm from './EditTaskForm';
 
