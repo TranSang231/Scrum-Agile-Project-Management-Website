@@ -1,7 +1,19 @@
 @use '../../base/variables' as *;
 @use '../../components/button' as *;
 
+
+// Thêm thẻ bọc addColumn
+.add-column-overlay {
+    flex: 1;
+}
+
+
 .add-column-button {
+
+    margin-top: 36px;
+    margin-left: 14%;
+    margin-right: 14%;
+    
     button {
         display: inline-flex;
         align-items: center;
@@ -29,6 +41,7 @@
 }
 
 .add-column-form {
+    margin-top: 20px;
     padding: 12px;
     display: flex;
     flex-direction: column;
@@ -82,3 +95,11 @@
         }
     }
 }
+
+
+@media (max-width: 1024px) {
+    .add-column-button {
+        margin-top: 0;
+        margin-left: 0;
+    }
+  }

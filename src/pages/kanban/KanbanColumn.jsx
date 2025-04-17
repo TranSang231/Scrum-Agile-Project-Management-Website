@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../../assets/styles/pages/kanban/kanbanColumn.scss';
 import TaskCard from '../../components/TaskCard.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const KanbanColumn = ({ 
   columns, 
@@ -60,6 +61,8 @@ const KanbanColumn = ({
   return (
     <div className="kanban-columns-manager">
       {/* Hiển thị các cột */}
+      
+
       <div className="kanban-board">
         {columns.map(column => (
           <div className="task-column" key={column.id}>
@@ -142,39 +145,43 @@ const KanbanColumn = ({
             </div>
           </div>
         ))}
-
-        {/* Nút thêm cột mới */}
-        {!showAddColumn ? (
-          <div className="add-column-button">
-            <button class="button button--primary" onClick={() => setShowAddColumn(true)}>
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Add Column
-            </button>
-          </div>
-        ) : (
-          <div className="add-column-form">
-            <input
-              className="input-field"
-              type="text"
-              placeholder="Tiêu đề cột"
-              value={newColumnTitle}
-              onChange={(e) => setNewColumnTitle(e.target.value)}
-              autoFocus
-            />
-            <div className="form-actions">
-              <button 
-                class="button button--save"
-                onClick={handleAddColumn}>Thêm cột</button>
-              <button 
-                class="button button--cancel"
-                onClick={() => setShowAddColumn(false)}>Hủy</button>
-            </div>
-          </div>
-        )}
       </div>
+        
+        {/* Đưa thẻ addColumn ra ngoài thẻ Kanban-board */}
+        <div className="add-column-overlay">
+          {/* Nút thêm cột mới */}
+            {!showAddColumn ? (
+              <div className="add-column-button">
+                <button className="button button--primary" onClick={() => setShowAddColumn(true)}>
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  Add Column
+                </button>
+              </div>
+            ) : (
+              <div className="add-column-form">
+                <input
+                  className="input-field"
+                  type="text"
+                  placeholder="Tiêu đề cột"
+                  value={newColumnTitle}
+                  onChange={(e) => setNewColumnTitle(e.target.value)}
+                  autoFocus
+                />
+                <div className="form-actions">
+                  <button 
+                    className="button button--save"
+                    onClick={handleAddColumn}>Thêm cột</button>
+                  <button 
+                    className="button button--cancel"
+                    onClick={() => setShowAddColumn(false)}>Hủy</button>
+                </div>
+              </div>
+            )}
+        </div>
+      
     </div>
   );
 };
