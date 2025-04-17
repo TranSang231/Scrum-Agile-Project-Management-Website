@@ -145,10 +145,7 @@ const KanbanColumn = ({
             </div>
           </div>
         ))}
-      </div>
-        
-        {/* Đưa thẻ addColumn ra ngoài thẻ Kanban-board */}
-        <div className="add-column-overlay">
+          
           {/* Nút thêm cột mới */}
             {!showAddColumn ? (
               <div className="add-column-button">
@@ -157,7 +154,6 @@ const KanbanColumn = ({
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
-                  Add Column
                 </button>
               </div>
             ) : (
@@ -180,7 +176,8 @@ const KanbanColumn = ({
                 </div>
               </div>
             )}
-        </div>
+      </div>
+        
       
     </div>
   );
