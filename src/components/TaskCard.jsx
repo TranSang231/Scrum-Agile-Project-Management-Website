@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import DropdownMenu from './DropDownMenu';
 import EditTaskForm from './EditTaskForm';
+import "../../src/assets/styles/components/taskCard.scss";
 
 // Component TaskCard để hiển thị thông tin của một task
 function TaskCard({ task, onEditSave, onDelete }) {
@@ -33,9 +34,6 @@ function TaskCard({ task, onEditSave, onDelete }) {
     return (
         <div className="task-card" key={task.id}>
             <div className="task-header">
-                {/* <div className={`task-type task-type-${task.type}`}>
-                    {task.typeLabel}
-                </div> */}
                 <p className="task-title">{task.title}</p>
 
                 <DropdownMenu // Đặt vị trí của menu thả xuống
