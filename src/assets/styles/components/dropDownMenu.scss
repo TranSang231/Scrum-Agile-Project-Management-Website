@@ -3,6 +3,10 @@
 .dropdown-container {
   position: relative;
 
+  .button--icon {
+    padding: 0;
+  }
+
   .dropdown-menu {
     position: absolute;
     right: 0;
