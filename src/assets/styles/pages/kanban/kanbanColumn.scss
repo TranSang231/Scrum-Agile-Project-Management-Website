@@ -1,8 +1,12 @@
 @use '../../base/variables' as *;
 @use '../../components/button' as *;
 
+
 .add-column-button {
+    
     button {
+        width: 34px;
+        height: 34px;
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -10,7 +14,7 @@
         background-color: rgba($thirdary-color, 0.9);
         color: $secondary-color;
         border: none;
-        border-radius: 8px;
+        border-radius: 50%;
         font-size: 14px;
         font-weight: 500;
         cursor: pointer;
@@ -29,10 +33,13 @@
 }
 
 .add-column-form {
+    width: 300px;
+    margin-top: 20px;
     padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    // justify-content: flex-end;
 
     .input-field {
         padding: 10px 14px;

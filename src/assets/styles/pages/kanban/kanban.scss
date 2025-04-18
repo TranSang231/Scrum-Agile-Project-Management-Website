@@ -1,3 +1,15 @@
+.kanban-wrapper {
+  display: flex;
+
+  .kanban-main {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
 .kanban-container {
   display: flex;
   flex-direction: column;
@@ -21,6 +33,9 @@
 
   .kanban-columns-manager {
     height: 100%;
+    overflow-x: auto; // Cho phép cuộn ngang khi có nhiều cột
+    display: flex;
+    flex-direction: row;
   }
 
   .kanban-board {
@@ -28,7 +43,9 @@
     gap: 20px;
     padding: 20px;
     overflow-x: auto;
-    height: 100%;
+    height: 90%;
+    width: 100%;
+    margin-right: 10px;
 
     .task-column {
       min-width: 280px;
@@ -37,7 +54,7 @@
       border-radius: 8px;
       display: flex;
       flex-direction: column;
-      max-height: 85%;
+      max-height: 100%;
 
       .column-header {
         display: flex;
@@ -161,6 +178,9 @@
       }
     }
   }
+  
+  
+  
 }
 
 .time-filter {
@@ -175,16 +195,5 @@
 
   span {
     margin-right: 8px;
-  }
-}
-
-.kanban-wrapper {
-  display: flex;
-
-  .kanban-main {
-    height: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
   }
 }
