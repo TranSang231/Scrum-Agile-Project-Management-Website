@@ -1,0 +1,84 @@
+@use '../../base/variables' as *;
+@use '../../components/button' as *;
+
+.add-column-button {
+    button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background-color: rgba($thirdary-color, 0.9);
+        color: $secondary-color;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+
+        &:hover {
+            background-color: $thirdary-color;
+            transform: scale(1.05);
+        }
+
+        svg {
+            flex-shrink: 0;
+        }
+    }
+
+}
+
+.add-column-form {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .input-field {
+        padding: 10px 14px;
+        font-size: 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        outline: none;
+        color: #334155;
+
+        &:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap; // 👉 để tự xuống hàng khi hẹp
+    }
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.column-edit-form {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    flex-wrap: wrap;
+
+    input {
+        padding: 8px 0px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #334155;
+        outline: none;
+
+        &:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+    }
+}

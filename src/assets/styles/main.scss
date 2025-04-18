@@ -1,0 +1,20 @@
+// Base styles
+@use './base/variables';
+@use './base/reset';
+@use './base/typography';
+
+// Component styles
+@use './components/_button';
+@use './components/_form';
+@use './components/_headerLink';
+@use './components/_otpInputGroup';
+@use './components/emailForm';
+@use './components/formHeader';
+@use './components/otpForm';
+@use './components/passwordForm';
+
+// Page styles
+@use './pages/auth/ForgotPassword';
+@use './pages/auth/Login';
+@use './pages/auth/Registration';
+
