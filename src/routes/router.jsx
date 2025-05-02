@@ -7,7 +7,6 @@ import Login from "../pages/auth/Login.jsx";
 import ForgotPasswordPage from "../pages/auth/ForgotPassword.jsx";
 import Registration from '../pages/auth/Registration.jsx';
 import Kanban from '../pages/kanban/Kanban.jsx';
-import Backlog from '../pages/backlog/Backlog.jsx';
 
 function AppRouter() {
   return (
