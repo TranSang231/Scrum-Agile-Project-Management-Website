@@ -96,7 +96,7 @@ export const PasswordForm = ({
       <button type="button" className="back-button" onClick={() => setStep(2)}>
         Back
       </button>
-      <button type="submit" className="button" disabled={!isPasswordValid}>
+      <button type="submit" className="button button--form" disabled={!isPasswordValid}>
         Complete Registration
       </button>
     </div>
