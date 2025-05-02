@@ -1,0 +1,15 @@
+@use '../base/variables' as *;
+
+.form-group {
+    margin-bottom: 0.75rem; // Reduced from 1.25rem
+    width: 100%;
+
+    label {
+        display: block;
+        margin-bottom: 0.25rem; // Reduced from 0.5rem
+        color: $dark-500;
+        font-weight: 500;
+        font-size: 0.875rem; // Added to reduce height
+    }
+}
+

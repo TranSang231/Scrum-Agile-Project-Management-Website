@@ -1,64 +1,119 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useState, useEffect } from 'react';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "../../assets/styles/pages/auth/Login.scss"; // Đường dẫn đến file CSS riêng
 
-const LoginPage = () => {
-  return (
-    <div className="d-flex vh-100" style={{ fontFamily: "'Poppins', sans-serif", backgroundColor: "#F8F9FA" }}>
-      <div className="container-fluid d-flex flex-column flex-md-row">
-        {/* Sidebar (3/4 màn hình) */}
-        <div 
-          className="d-flex flex-column justify-content-center align-items-center col-md-9 col-12 px-4 position-relative"
-          style={{ minHeight: "100vh", backgroundColor: "#EDF0F4" }}
-        >
-          {/* Logo */}
-          <div className="position-absolute top-0 start-0 m-3">
-            <img 
-              src="https://via.placeholder.com/50" 
-              alt="Logo" 
-              className="rounded-circle" 
-              style={{ width: "50px", height: "50px" }} 
-            />
-          </div>
+const Login = () => {
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState(''); // success or error
 
-          <div className="w-100" style={{ maxWidth: "400px" }}>
-            <h2 className="text-center mb-3">Log In</h2>
-            <p className="text-center" style={{ color: "rgba(0, 0, 0, 0.6)" }}>
-              By signing up, you agree to the <a href="/terms" style={{ color: "rgba(0, 0, 0, 0.6)", textDecoration: "none" }}>Terms of Use</a> and <a href="/privacy" style={{ color: "rgba(0, 0, 0, 0.6)", textDecoration: "none" }}>Privacy Policy</a>.
-            </p>
-            <form>
-              <div className="mb-3">
-                <label className="form-label" style={{ color: "rgba(0, 0, 0, 0.6)" }}>Email</label>
-                <input 
-                  type="email" 
-                  className="form-control" 
-                  placeholder="Enter your email" 
-                  style={{ borderColor: "rgba(0, 0, 0, 0.3)", backgroundColor: "transparent" }} 
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label" style={{ color: "rgba(0, 0, 0, 0.6)" }}>Password</label>
-                <input 
-                  type="password" 
-                  className="form-control" 
-                  placeholder="Enter your password" 
-                  style={{ borderColor: "rgba(0, 0, 0, 0.3)", backgroundColor: "transparent" }} 
-                />
-              </div>
-              <button className="btn btn-dark w-100 rounded-pill">Sign in</button>
-            </form>
-            <div className="text-center mt-3">
-              <a href="/" className="fw-bold" style={{ color: "rgba(0, 0, 0, 0.6)", textDecoration: "none" }}>Create an account?</a>
-              <br />
-              <a href="/email-password" style={{ color: "rgba(0, 0, 0, 0.6)", textDecoration: "none" }}>Forget your user ID or password?</a>
+    // Handle email input change
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+    };
+
+    // Handle password input change
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    };
+
+    const handleLoginSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            await axios.post("http://127.0.0.1:8000/api/auth/login/verify/", { email, password });
+            setMessage("Login successful!");
+            setMessageType("success");
+            setTimeout(() => {
+                navigate("/home");
+              }, 2000);
+            }
+        catch (error) {
+            console.error("Login failed:", error);
+            setMessage(error.response?.data?.error || "Login failed. Please try again.");
+            setMessageType("error");
+            // Xử lý lỗi nếu cần
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    return (
+        <div className="login-container d-flex vh-100">
+            {/* Cột bên phải (3/4) có nền xám và chứa form login */}
+            <div className="left-section d-flex align-items-center justify-content-center">
+                <div className="login-card p-4">
+                    <h2 className="text-center fw-bold">Log In</h2>
+
+                    <p class="terms-text">
+                        By signing up, you agree to the <a href="#">Terms of use</a> and <a href="#">Privacy Policy</a>.
+                    </p>
+
+                    <form className="login-form" onSubmit={handleLoginSubmit}>  
+                        <div className="mb-3">
+                            <label className="form-label">Email</label>
+                            <input 
+                                type="email" 
+                                value={email}
+                                onChange={handleEmailChange}
+                                className="form-control" 
+                                placeholder="Enter your email"
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Password</label>
+                            <input 
+                                type="password" 
+                                className="form-control" 
+                                value={password}
+                                onChange={handlePasswordChange}
+                                placeholder="Enter your password"
+                            />
+                        </div>
+
+                        <button 
+                          type="submit"
+                          className="button"
+                          disabled={isLoading}
+                        >
+                            {isLoading ? <span className="spinner-border spinner-border-sm me-2"></span> : ""} 
+                            Sign in
+                        </button>
+
+                        {message && (
+                            <div className={`alert ${messageType === "success" ? "alert-success" : "alert-danger"} mt-3`}>
+                            {message}
+                            </div>
+                        )}
+                        
+                    </form>
+
+                    <div className="text-center mt-3">
+                        <p className="text-center mt-3">
+                            <a onClick={() => navigate("/")} className="create-account-link">
+                                Create an account?
+                            </a>
+                        </p>
+
+                        <p className="text-center forgot-password">
+                            <a onClick={() => navigate("/forgot-password")} className="">
+                                Forgot your user ID or password?
+                            </a>
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
 
-        {/* Right Space (1/4 màn hình) */}
-        <div className="col-md-3 d-none d-md-block" style={{ minHeight: "100vh", backgroundColor: "#F8F9FA" }}></div>
-      </div>
-    </div>
-  );
+            {/* Cột bên trái (1/4) có nền trắng */}
+            <div className="right-section"></div>    
+        </div>
+    );
 };
 
-export default LoginPage;
+export default Login;

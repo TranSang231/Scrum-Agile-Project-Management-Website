@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Login from "../pages/auth/Login.jsx";
 import ForgotPasswordPage from "../pages/auth/ForgotPassword.jsx";
-import EmailPasswordPage from "../pages/auth/EmailPassword.jsx";
-import OTPPage from "../pages/auth/OtpPage.jsx";
+// import EmailPasswordPage from "../pages/auth/EmailPassword.jsx";
+// import OTPPage from "../pages/auth/OtpPage.jsx";
 import Registration from '../pages/auth/Registration.jsx';
 
 function AppRouter() {
@@ -13,9 +13,9 @@ function AppRouter() {
         <Routes>
             <Route path="/" element={<Registration />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/email-password" element={<EmailPasswordPage />} />
-            <Route path="/otp" element={<OTPPage />} />
-            <Route path="/reset-password" element={<ForgotPasswordPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            {/* <Route path="/otp" element={<OTPPage />} /> */}
+            {/* <Route path="/reset-password" element={<ForgotPasswordPage />} /> */}
         </Routes>
     </Router>
   );
