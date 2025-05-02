@@ -1,0 +1,15 @@
+@use '../base/variables' as *;
+
+.form-heading {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    color: $thirdary-color;
+    text-align: center;
+}
+
+.form-subtitle {
+    font-size: 12px;
+    text-align: center;
+
+}
