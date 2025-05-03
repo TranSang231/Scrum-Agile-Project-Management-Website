@@ -6,6 +6,7 @@ const NavLeft = ({ activeView, setActiveView }) => {
   const navigate = useNavigate(); 
   
   const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
     { id: 'project', label: 'Project', icon: 'project', path: '/project' },
     { id: 'backlog', label: 'Backlog', icon: 'calendar', path: '/backlog' },
     { id: 'kanban', label: 'Kanban', icon: 'layers', path: '/kanban' },
@@ -14,6 +15,16 @@ const NavLeft = ({ activeView, setActiveView }) => {
 
   const renderIcon = (iconName) => {
     switch (iconName) {
+      case 'dashboard':
+        return (
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />  
+            <rect x="14" y="14" width="7" height="7" />
+          </svg>
+        );
+    
       case 'project':
         return (
           <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none">

@@ -1,11 +1,12 @@
 import React from "react";
-import { useState, useEffect } from 'react';
-import axios from "axios";
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import "../../assets/styles/pages/auth/Login.scss"; // Đường dẫn đến file CSS riêng
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,20 +26,29 @@ const Login = () => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setMessage('');
+        setMessageType('');
 
         try {
-            await axios.post("http://127.0.0.1:8000/api/auth/login/verify/", { email, password });
-            setMessage("Login successful!");
-            setMessageType("success");
-            setTimeout(() => {
-                navigate("/home");
-              }, 2000);
+            const result = await login(email, password);
+            
+            if (result.success) {
+                setMessage("Login successful!");
+                setMessageType("success");
+                
+                // Redirect based on role
+                if (result.role === 'Admin' || result.role === 'Project Manager') {
+                    navigate("/admin");
+                } else {
+                    navigate("/dashboard");
+                }
+            } else {
+                throw new Error(result.error);
             }
-        catch (error) {
+        } catch (error) {
             console.error("Login failed:", error);
-            setMessage(error.response?.data?.error || "Login failed. Please try again.");
+            setMessage(error.message || "Login failed. Please try again.");
             setMessageType("error");
-            // Xử lý lỗi nếu cần
         } finally {
             setIsLoading(false);
         }
@@ -50,7 +60,7 @@ const Login = () => {
                 <div className="login-card p-4">
                     <h2 className="text-center fw-bold">Log In</h2>
 
-                    <p class="terms-text">
+                    <p className="terms-text">
                         By signing up, you agree to the <a href="#">Terms of use</a> and <a href="#">Privacy Policy</a>.
                     </p>
 
@@ -63,6 +73,7 @@ const Login = () => {
                                 onChange={handleEmailChange}
                                 className="form-control" 
                                 placeholder="Enter your email"
+                                required
                             />
                         </div>
 
@@ -74,6 +85,7 @@ const Login = () => {
                                 value={password}
                                 onChange={handlePasswordChange}
                                 placeholder="Enter your password"
+                                required
                             />
                         </div>
 
@@ -96,7 +108,7 @@ const Login = () => {
 
                     <div className="text-center mt-3">
                         <p className="text-center mt-3">
-                            <a onClick={() => navigate("/")} className="create-account-link">
+                            <a onClick={() => navigate("/register")} className="create-account-link">
                                 Create an account?
                             </a>
                         </p>
