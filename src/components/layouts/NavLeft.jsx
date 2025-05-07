@@ -75,6 +75,15 @@ const NavLeft = ({ activeView, setActiveView }) => {
     navigate(item.path);
   }
 
+  const handleLogout = () => {
+    // Xóa token và thông tin đăng nhập
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Chuyển hướng về trang đăng nhập
+    navigate('/login');
+  };
+
   return (
     <div className="navbar-left">
       <div className="navbar-content">
@@ -93,7 +102,7 @@ const NavLeft = ({ activeView, setActiveView }) => {
       </div>
       
       <div className="navbar-footer">
-        <div className="nav-item">
+        <div className="nav-item" onClick={handleLogout}>
           <div className="nav-icon">
             {renderIcon('log-out')}
           </div>

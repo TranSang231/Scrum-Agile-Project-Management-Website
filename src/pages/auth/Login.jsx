@@ -30,21 +30,37 @@ const Login = () => {
         setMessageType('');
 
         try {
-            const result = await login(email, password);
-            
-            if (result.success) {
-                setMessage("Login successful!");
-                setMessageType("success");
-                
-                // Redirect based on role
-                if (result.role === 'Admin' || result.role === 'Project Manager') {
-                    navigate("/admin");
-                } else {
-                    navigate("/dashboard");
-                }
-            } else {
-                throw new Error(result.error);
+            // Gọi API JWT để lấy token
+            const response = await fetch('http://localhost:8000/api/token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Invalid credentials');
             }
+
+            const tokenData = await response.json();
+            
+            // Lưu JWT token vào localStorage
+            localStorage.setItem('access_token', tokenData.access);
+            localStorage.setItem('refresh_token', tokenData.refresh);
+
+            // Cập nhật trạng thái đăng nhập trong AuthContext
+            await login(email, password);
+            
+            setMessage("Login successful!");
+            setMessageType("success");
+            
+            // Chuyển hướng đến trang chủ
+            navigate("/dashboard");
         } catch (error) {
             console.error("Login failed:", error);
             setMessage(error.message || "Login failed. Please try again.");

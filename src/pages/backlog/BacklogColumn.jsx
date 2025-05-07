@@ -42,27 +42,26 @@ const BacklogColumn = () => {
         }
     ]);
 
-
     return (
-        <div className="backlog-column">
-            <div className="content-area">  
-                <div className="section-header">
-                    <h2 className="section-title">Product Backlog</h2>
-                    <div className="section-actions">
-                        <button className="button--icon">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="backlog__column">
+            <div className="backlog__column-content">  
+                <div className="backlog__column-header">
+                    <h2 className="backlog__column-title">Product Backlog</h2>
+                    <div className="backlog__column-actions">
+                        <button className="backlog__column-button backlog__column-button--icon">
+                            <svg className="backlog__column-icon" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                         </button>
-                        <button className="button--icon">
-                            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button className="backlog__column-button backlog__column-button--icon">
+                            <svg className="backlog__column-icon" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                             </svg>
                         </button>
                     </div>
                 </div>
                 
-                <div class="task-list">
+                <div className="backlog__task-list">
                 {columns[0].tasks.map((task) => (
                     <TaskCard
                         key={task.id}
@@ -86,7 +85,7 @@ const BacklogColumn = () => {
                 </div>
             </div>
 
-            <button className="button" onClick={() => handleCreateTask(columns[0].id)}>Create Task</button>
+            <button className="backlog__column-button backlog__column-button--create" onClick={() => handleCreateTask(columns[0].id)}>Create Task</button>
 
             {isCreatingTask && (
                 <EditTaskForm

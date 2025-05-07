@@ -32,18 +32,33 @@ function Registration() {
   // Step 1: Submit email and request OTP
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Bắt đầu loading
+    setIsLoading(true);
+    setSuccessMessage(''); // Clear any previous messages
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/auth/register/request-otp/", { email });
-      setSuccessMessage("OTP sent to your email");
-      startTimer(); // Start the countdown timer
-      setStep(2); // Move to OTP step
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/register/request-otp/", { 
+        email: email 
+      });
+
+      if (response.status === 200) {
+        setSuccessMessage("OTP sent to your email");
+        startTimer();
+        setStep(2);
+      }
     } catch (error) {
       console.error("Error sending OTP:", error);
-      setErrorMessage(error.response?.data?.error || "Failed to send OTP");
+      if (error.response) {
+        // Server responded with error status
+        setErrorMessage(error.response.data.error || "Failed to send OTP");
+      } else if (error.request) {
+        // Request was made but no response received
+        setErrorMessage("No response from server. Please try again.");
+      } else {
+        // Something else happened
+        setErrorMessage("An error occurred. Please try again.");
+      }
     } finally {
-      setIsLoading(false); // Kết thúc loading
+      setIsLoading(false);
     }
   };
 

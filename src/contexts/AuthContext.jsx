@@ -20,24 +20,29 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login/verify/', {
+      // 1. Lấy access/refresh token từ JWT endpoint
+      const tokenRes = await axios.post('http://localhost:8000/api/token/', {
         email,
         password
       });
-      
-      const { access, refresh, user, role } = response.data;
-      
-      // Lưu thông tin vào localStorage
+      const { access, refresh } = tokenRes.data;
+
+      // 2. Gọi API lấy thông tin user
+      const userRes = await axios.get('http://localhost:8000/api/auth/user/me/', {
+        headers: { Authorization: `Bearer ${access}` }
+      });
+      const { email: userEmail, role } = userRes.data;
+
+      // 3. Lưu vào localStorage
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      localStorage.setItem('user_data', JSON.stringify({ ...user, role }));
-      
-      // Cập nhật state
-      setUser({ ...user, role });
-      
+      localStorage.setItem('user_data', JSON.stringify({ email: userEmail, role }));
+
+      setUser({ email: userEmail, role });
+
       return { success: true, role };
     } catch (error) {
-      return { success: false, error: error.response?.data?.error || 'Login failed' };
+      return { success: false, error: error.response?.data?.detail || 'Login failed' };
     }
   };
 
