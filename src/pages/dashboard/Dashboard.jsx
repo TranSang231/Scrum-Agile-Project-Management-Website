@@ -13,48 +13,48 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard-wrapper">
+        <div className="dashboard">
             <NavLeft activeView={activeView} setActiveView={setActiveView} />
-            <div className="dashboard-main">
+            <div className="dashboard__main">
                 <NavTop />
-                <div className="dashboard-container">
-                    <div className="dashboard-header">
-                        <h1>Dashboard</h1>
-                        <div className="welcome-message">
+                <div className="dashboard__container">
+                    <div className="dashboard__header">
+                        <h1 className="dashboard__title">Dashboard</h1>
+                        <div className="dashboard__welcome">
                             Welcome back, {user?.email}!
                         </div>
                     </div>
 
-                    <div className="dashboard-content">
-                        <div className="stats-cards">
-                            <div className="stat-card">
-                                <h3>Active Tasks</h3>
-                                <div className="number">12</div>
+                    <div className="dashboard__content">
+                        <div className="dashboard__stats">
+                            <div className="dashboard__stat-card">
+                                <h3 className="dashboard__stat-title">Active Tasks</h3>
+                                <div className="dashboard__stat-value">12</div>
                             </div>
-                            <div className="stat-card">
-                                <h3>Completed Tasks</h3>
-                                <div className="number">24</div>
+                            <div className="dashboard__stat-card">
+                                <h3 className="dashboard__stat-title">Completed Tasks</h3>
+                                <div className="dashboard__stat-value">24</div>
                             </div>
-                            <div className="stat-card">
-                                <h3>In Progress</h3>
-                                <div className="number">8</div>
+                            <div className="dashboard__stat-card">
+                                <h3 className="dashboard__stat-title">In Progress</h3>
+                                <div className="dashboard__stat-value">8</div>
                             </div>
                         </div>
 
-                        <div className="recent-activities">
-                            <h2>Recent Activities</h2>
-                            <div className="activity-list">
-                                <div className="activity-item">
-                                    <span className="time">2 hours ago</span>
-                                    <span className="description">Updated task "Implement login functionality"</span>
+                        <div className="dashboard__activities">
+                            <h2 className="dashboard__activities-title">Recent Activities</h2>
+                            <div className="dashboard__activity-list">
+                                <div className="dashboard__activity-item">
+                                    <span className="dashboard__activity-time">2 hours ago</span>
+                                    <span className="dashboard__activity-desc">Updated task "Implement login functionality"</span>
                                 </div>
-                                <div className="activity-item">
-                                    <span className="time">4 hours ago</span>
-                                    <span className="description">Completed task "Design database schema"</span>
+                                <div className="dashboard__activity-item">
+                                    <span className="dashboard__activity-time">4 hours ago</span>
+                                    <span className="dashboard__activity-desc">Completed task "Design database schema"</span>
                                 </div>
-                                <div className="activity-item">
-                                    <span className="time">1 day ago</span>
-                                    <span className="description">Assigned to new task "Fix UI bugs"</span>
+                                <div className="dashboard__activity-item">
+                                    <span className="dashboard__activity-time">1 day ago</span>
+                                    <span className="dashboard__activity-desc">Assigned to new task "Fix UI bugs"</span>
                                 </div>
                             </div>
                         </div>

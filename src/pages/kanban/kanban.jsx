@@ -127,16 +127,16 @@ const Kanban = () => {
   };
 
   return (
-    <div className="kanban-wrapper">
+    <div className="kanban">
       <NavLeft activeView={activeView} setActiveView={setActiveView} />
-      <div className="kanban-main">
+      <div className="kanban__main">
         <NavTop />
-        <div className="kanban-container">
-          <div className="kanban-header">
-            <h1>Kanban</h1>
-            <div className="time-filter">
-              <span>{timeFilter}</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+        <div className="kanban__container">
+          <div className="kanban__header">
+            <h1 className="kanban__title">Kanban</h1>
+            <div className="kanban__time-filter">
+              <span className="kanban__time-filter-text">{timeFilter}</span>
+              <svg className="kanban__time-filter-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
@@ -148,7 +148,6 @@ const Kanban = () => {
             setColumns={setColumns}
             onAddTask={handleAddTask}
           />
-
 
           {/* Hiển thị form thêm task */}
           {
