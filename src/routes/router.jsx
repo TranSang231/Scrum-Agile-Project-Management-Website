@@ -16,6 +16,9 @@ import Kanban from '../pages/kanban/Kanban.jsx';
 import Backlog from '../pages/backlog/Backlog.jsx';
 import Project from '../pages/project/Project.jsx';
 
+//Profile pages
+import Profile from '../pages/profile/Profile.jsx'
+
 function AppRouter() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -61,7 +64,15 @@ function AppRouter() {
               </ProtectedRoute>
             }
           />
-
+        
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute allowedRoles={['Developer', 'Tester', 'Project Manager', 'Admin']}>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/project"
             element={
