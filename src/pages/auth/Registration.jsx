@@ -32,16 +32,25 @@ function Registration() {
   // Step 1: Submit email and request OTP
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Please enter a valid email address");
+      return;
+    }
+
     setIsLoading(true);
     setSuccessMessage(''); // Clear any previous messages
+    setErrorMessage(''); // Clear any previous errors
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/register/request-otp/", { 
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/request-otp/", { 
         email: email 
       });
 
       if (response.status === 200) {
-        setSuccessMessage("OTP sent to your email");
+        setSuccessMessage("OTP has been sent to your email. Please check your inbox.");
         startTimer();
         setStep(2);
       }
@@ -49,13 +58,35 @@ function Registration() {
       console.error("Error sending OTP:", error);
       if (error.response) {
         // Server responded with error status
-        setErrorMessage(error.response.data.error || "Failed to send OTP");
+        const errorData = error.response.data;
+        
+        // Check specifically for existing email error
+        if (errorData.error === 'Email already registered') {
+          setErrorMessage(
+            <div>
+              <p>This email is already registered.</p>
+              <p className="mt-2">
+                Would you like to{' '}
+                <a href="/login" className="text-primary">log in</a>
+                {' '}or use a different email?
+              </p>
+            </div>
+          );
+        } else if (typeof errorData === 'object') {
+          // Handle validation errors
+          const errorMessages = Object.entries(errorData)
+            .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+            .join('\n');
+          setErrorMessage(errorMessages);
+        } else {
+          setErrorMessage(errorData.error || "Failed to send OTP");
+        }
       } else if (error.request) {
         // Request was made but no response received
-        setErrorMessage("No response from server. Please try again.");
+        setErrorMessage("Unable to connect to server. Please check your internet connection.");
       } else {
         // Something else happened
-        setErrorMessage("An error occurred. Please try again.");
+        setErrorMessage("An unexpected error occurred. Please try again.");
       }
     } finally {
       setIsLoading(false);
@@ -65,21 +96,72 @@ function Registration() {
   // Step 2: Verify OTP and move to password step
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
 
+    // Validate OTP input
     if (otpCode.includes('')) {
       setErrorMessage("Please enter all OTP digits");
+      setIsLoading(false);
       return;
     }
 
     const combinedOtp = otpCode.join(''); // Combine OTP digits into a single string
 
+    // Validate OTP format
+    if (!/^\d{6}$/.test(combinedOtp)) {
+      setErrorMessage("OTP must be 6 digits");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      await axios.post("http://127.0.0.1:8000/api/auth/register/verify-otp/", { email, otpCode: combinedOtp});
-      setSuccessMessage("OTP verified successfully");
-      setStep(3); // Move to password step
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/verify-otp/", {
+        email,
+        otpCode: combinedOtp
+      });
+
+      if (response.data.message === 'OTP verified successfully') {
+        setSuccessMessage("OTP verified successfully. Please set your password.");
+        // Clear OTP input
+        setOtpCode(['', '', '', '', '', '']);
+        // Move to password step after a short delay
+        setTimeout(() => {
+          setStep(3);
+        }, 1500);
+      }
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      setErrorMessage(error.response?.data?.error || "Invalid OTP");
+      
+      if (error.response?.data?.details) {
+        // Handle detailed error messages
+        const errorDetails = error.response.data.details;
+        if (errorDetails.otpCode) {
+          setErrorMessage(errorDetails.otpCode);
+        } else if (errorDetails.email) {
+          setErrorMessage(errorDetails.email);
+        } else {
+          setErrorMessage(error.response.data.error);
+        }
+      } else if (error.response?.data?.error) {
+        // Handle general error message
+        setErrorMessage(error.response.data.error);
+      } else if (error.request) {
+        // Network error
+        setErrorMessage("Unable to connect to server. Please check your internet connection.");
+      } else {
+        // Other errors
+        setErrorMessage("An unexpected error occurred. Please try again.");
+      }
+
+      // If OTP is expired or invalid, allow resending
+      if (error.response?.data?.error === 'OTP has expired' || 
+          error.response?.data?.error === 'Invalid OTP') {
+        stopTimer();
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,21 +175,52 @@ function Registration() {
     }
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/auth/register/complete/", { email, password, confirmPassword, otpCode });
-      alert("Registration successful!");
-      // Redirect to login page or dashboard
-      window.location.href = "/login";
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/register/", {
+        email,
+        password,
+        confirm_password: confirmPassword  // Đổi tên trường để khớp với backend
+      });
+
+      if (response.status === 201) {
+        setSuccessMessage("Registration successful!");
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      }
     } catch (err) {
-      console.log(err);
-      setErrorMessage(err.response?.data?.error || "Registration failed");
+      console.error("Registration error:", err);
+      if (err.response) {
+        // Server trả về lỗi
+        const errorData = err.response.data;
+        if (typeof errorData === 'object') {
+          // Xử lý lỗi validation
+          const errorMessages = Object.entries(errorData)
+            .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+            .join('\n');
+          setErrorMessage(errorMessages);
+        } else {
+          setErrorMessage(errorData || "Registration failed");
+        }
+      } else if (err.request) {
+        // Không nhận được response
+        setErrorMessage("No response from server. Please try again.");
+      } else {
+        // Lỗi khác
+        setErrorMessage("An error occurred. Please try again.");
+      }
     }
   };
 
   const handleResendOtp = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/auth/register/request-otp/", { email });
-      setSuccessMessage(response.data.message || "OTP resent to your email");
+      const response = await axios.post("http://127.0.0.1:8000/api/auth/request-otp/", { email });
+      setSuccessMessage("OTP resent to your email");
       startTimer(); // Restart the countdown timer
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 30000);
     } catch (error) {
       console.error("Error sending OTP:", error);
       setErrorMessage(error.response?.data?.error || "Failed to resend OTP");
@@ -154,7 +267,8 @@ function Registration() {
             handleResendOtp,
             message,
             messageType,
-            isLoading
+            isLoading,
+            setStep
           }} />}
           {step === 3 && <PasswordForm {...{
             password,
@@ -170,7 +284,8 @@ function Registration() {
             passwordConditions,
             isPasswordValid,
             message,
-            messageType
+            messageType,
+            setStep
           }} />}
         </div>
       </div>
