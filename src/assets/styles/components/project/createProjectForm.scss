@@ -1,3 +1,5 @@
+@use "../project/recentEmail" as *;
+
 .create-project-form {
     position: fixed;
     top: 0;
@@ -93,6 +95,68 @@
             border-color: #000000;
         }
     }
+
+    &__tags-input-container {
+        position: relative;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background-color: white;
+        padding: 6px;
+        min-height: 45px;
+        
+        &:focus-within {
+            border-color: #000000;
+        }
+    }
+
+    &__tags-area {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }
+
+    &__tag {
+        background-color: #f1f5f9;
+        border-radius: 20px;
+        padding: 4px 10px;
+        display: inline-flex;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    &__tag-remove {
+        background: none;
+        border: none;
+        margin-left: 6px;
+        cursor: pointer;
+        color: #64748b;
+        padding: 0;
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover {
+            color: #334155;
+        }
+    }
+
+    &__tag-input {
+        border: none;
+        background: transparent;
+        flex: 1;
+        min-width: 120px;
+        padding: 4px 6px;
+        font-size: 14px;
+        color: #334155;
+        
+        &:focus {
+            outline: none;
+        }
+    }
+
+    
 
     &__textarea {
         resize: vertical;
