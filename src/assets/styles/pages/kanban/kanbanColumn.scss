@@ -1,0 +1,244 @@
+@use '../../base/variables' as *;
+@use '../../components/button' as *;
+
+.kanban-columns {
+  height: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+
+  &__board {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    overflow-x: auto;
+    height: 90%;
+    width: 100%;
+    margin-right: 10px;
+  }
+
+  &__column {
+    min-width: 280px;
+    width: 33.333%;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #334155;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &__content {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.kanban-task {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  &__type {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: white;
+    text-transform: uppercase;
+
+    &--design {
+      background-color: #10b981;
+    }
+
+    &--development {
+      background-color: #ec4899;
+    }
+
+    &--typography {
+      background-color: #0ea5e9;
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #334155;
+  }
+
+  &__description {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__assignees {
+    display: flex;
+  }
+
+  &__assignee {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 12px;
+    color: white;
+    margin-left: -8px;
+    border: 2px solid white;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.kanban-form {
+  &__add-column {
+    button {
+      width: 45px;
+      height: 45px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background-color: rgba($thirdary-color, 0.9);
+      color: $secondary-color;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+
+      &:hover {
+        background-color: $thirdary-color;
+        transform: scale(1.05);
+      }
+
+      svg {
+        width: 25px;
+        height: 25px;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  &__add-column-form {
+    width: 300px;
+    margin-top: 20px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__input {
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    color: #334155;
+
+    &:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__edit-column {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    flex-wrap: wrap;
+
+    input {
+      padding: 8px 0px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #334155;
+      outline: none;
+
+      &:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+      }
+    }
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .kanban-columns {
+    &__board {
+      padding: 10px;
+    }
+
+    &__column {
+      min-width: 250px;
+    }
+  }
+}

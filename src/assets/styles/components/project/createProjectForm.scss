@@ -1,0 +1,137 @@
+.create-project-form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    &__overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    &__content {
+        position: relative;
+        background-color: white;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 1;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    &__title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    &__close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: #64748b;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #334155;
+        }
+    }
+
+    &__body {
+        padding: 20px;
+    }
+
+    &__group {
+        margin-bottom: 20px;
+    }
+
+    &__row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    &__label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #334155;
+    }
+
+    &__input,
+    &__textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #334155;
+        transition: border-color 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: #000000;
+        }
+    }
+
+    &__textarea {
+        resize: vertical;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    &__cancel,
+    &__submit {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    &__cancel {
+        background-color: #f1f5f9;
+        color: #64748b;
+        border: none;
+
+        &:hover {
+            background-color: #e2e8f0;
+        }
+    }
+
+    &__submit {
+        background-color: #000000;
+        color: white;
+        border: none;
+
+        &:hover {
+            background-color: #1a1a1a;
+        }
+    }
+} 

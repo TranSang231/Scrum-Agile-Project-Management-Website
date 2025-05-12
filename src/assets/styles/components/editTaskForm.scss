@@ -1,0 +1,105 @@
+@use "../base/variables" as *;
+@use "../components//button" as *;
+
+.add-task-container {
+    position: fixed;
+    /* Để nó ghi đè lên trang */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba($dark-800, 0.2);
+    /* Lớp nền mờ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    /* Ghi đè trên tất cả */
+
+    form {
+        background: $secondary-color;
+        padding: 30px;
+        border-radius: 12px;
+        width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 25px rgba($dark-800, 0.2);
+        animation: fadeIn 0.3s ease;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid $dark-200;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .attach-file {
+            display: flex;
+            flex-direction: column;
+
+            label {
+                cursor: pointer;
+                color: $fourthary-color;
+                font-weight: 500;
+            }
+
+            .file-name {
+                margin-top: 5px;
+                font-size: 13px;
+                color: $dark-500;
+            }
+        }
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        input {
+            margin-right: 8px;
+        }
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .error-message {
+        color: $invalid-color;
+        margin-top: 5px;
+        font-size: 13px;
+    }
+}
+
+/* Hiệu ứng xuất hiện */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

@@ -1,0 +1,45 @@
+@use '../base/variables' as *;
+.header-links {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; // Thay đổi từ flex-end thành space-between
+    padding: 10px 15px; // Thêm padding ngang để văn bản không sát cạnh màn hình
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+.auth-links {
+    text-align: right;
+
+    a,
+    span {
+        color: $dark-500;
+        text-decoration: none;
+        font-weight: 300;
+        font-size: 0.75rem; // Reduced from 0.875rem
+        line-height: 1.2; // Added to reduce vertical spacing
+    }
+
+    .Login {
+        text-decoration: underline;
+        font-weight: 400;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-links {
+        flex-direction: column;
+        align-items: center;
+        padding: 5px 0; // Reduced from 10px
+        margin-bottom: 15px; // Reduced from 20px
+    }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 0.5rem; // Reduced from 1rem
+    }
+}

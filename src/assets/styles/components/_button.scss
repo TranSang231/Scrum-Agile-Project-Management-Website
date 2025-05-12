@@ -1,0 +1,121 @@
+@use '../base/variables' as *;
+@use 'sass:color';
+
+// ---------- Base Button Styles ---------- //
+%base-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+
+  &:disabled {
+    background-color: $dark-300;
+    color: $dark-200;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($dark-500, 0.5);
+  }
+}
+
+// ---------- Button Variations ---------- //
+.button {
+  @extend %base-button;
+  background-color: $dark-500;
+  color: $dark-100;
+
+  &--form {
+    width: 100%;
+    padding: 12px;
+    border-radius: 20px;
+    font-size: 16px;
+  }
+
+  &--primary {
+    border: none;
+    background-color: $fourthary-color;
+    color: $secondary-color;
+
+    &:hover {
+      background-color: color.scale($fourthary-color,$lightness: 8%);
+      transform: scale(1.05);
+    }
+  }
+
+  &--secondary {
+    border: none;
+    background-color: $primary-color;
+    color: $fifthary-color;
+
+    &:hover {
+      background-color: color.scale($primary-color,$lightness: 8%);
+    }
+  }
+
+  &--save {
+    border: none;
+    background-color: rgba($valid-color, 0.9);
+
+    &:hover {
+      background-color: $valid-color;
+    }
+  }
+
+  &--cancel {
+    border: none;
+    background-color: rgba($invalid-color, 0.9);
+
+    &:hover {
+      background-color: $invalid-color;
+    }
+  }
+
+  &--icon {
+    background: none;
+    padding: 6px;
+    color: $thirdary-color;
+    border: none;
+
+    &:hover {
+      background-color: $primary-color;
+      border-radius: 6px;
+    }
+
+    svg {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &--action {
+    margin: 4px;
+    border-radius: 6px;
+    font-size: 13px;
+    padding: 6px 12px;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+}
+
+// ---------- Button Group Styles ---------- //
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+
+  .button {
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+}

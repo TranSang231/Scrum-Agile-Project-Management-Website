@@ -1,0 +1,86 @@
+@use '../../base//variables' as *;
+@use '../../components/button' as *;
+
+/* Main layout */
+.backlog {
+  display: flex;
+  // width: 100%;
+  // height: 100%;
+  height: 100vh;
+  background-color: #f7f9fc;
+  // position: relative;
+}
+
+
+/* Content area */
+.backlog__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.backlog__container {
+  height: calc(100% - 65px);
+
+  .backlog__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .backlog__title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .backlog__time-filter {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #64748b;
+
+    &-text {
+      margin-right: 8px;
+    }
+  }
+
+  .backlog__content {
+    display: flex;
+    overflow: hidden;
+    height: calc(100% - 75px);
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+  .backlog-column {
+    width: 40%;
+  }
+}
+
+@media (max-width: 768px) {
+  .backlog__main {
+    margin-left: 0;
+  }
+
+  .backlog__container {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .backlog-column {
+    width: 100%;
+    height: 50%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}

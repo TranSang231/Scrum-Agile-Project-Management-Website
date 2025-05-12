@@ -1,0 +1,48 @@
+
+@use '../base/variables' as *;
+
+.form-group {
+    #email,
+    #password,
+    #confirm-password {
+        width: 100%;
+        padding: 0.5rem; // Reduced from 0.75rem
+        border: 1px solid $dark-300;
+        border-radius: 8px; // Reduced from 10px
+        font-size: 0.9375rem; // Reduced from 1rem
+        transition: border-color 0.3s ease;
+
+        &:focus {
+            border-color: $dark-400;
+            outline: none;
+        }
+    }
+}
+
+.terms-text {
+    text-align: center;
+    font-size: 0.875rem;
+    /* Kích thước vừa phải, không quá nhỏ */
+    color: #6c757d;
+    /* Màu tối nhạt cho dễ đọc */
+    line-height: 1.5;
+    /* Cải thiện khả năng đọc, tăng không gian giữa các dòng */
+    padding: 1.5rem 0;
+    /* Thêm padding trên và dưới để không quá sát */
+    word-wrap: break-word;
+    /* Đảm bảo nội dung không bị tràn ra ngoài */
+
+    a {
+        color: #007bff;
+        /* Màu xanh cho các liên kết */
+        text-decoration: none;
+        /* Bỏ gạch dưới mặc định */
+
+        &:hover {
+            text-decoration: underline;
+            /* Gạch dưới khi hover để dễ nhận diện liên kết */
+            color: #0056b3;
+            /* Tối màu khi hover để tạo sự tương phản */
+        }
+    }
+}

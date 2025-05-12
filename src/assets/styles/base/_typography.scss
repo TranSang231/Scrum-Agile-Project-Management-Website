@@ -1,0 +1,81 @@
+// _typography.scss
+@use 'sass:color';
+
+// Font families
+$font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+// Font sizes
+$font-size-xs: 0.75rem;   // 12px
+$font-size-sm: 0.875rem;  // 14px
+$font-size-md: 1rem;      // 16px
+$font-size-lg: 1.125rem;  // 18px
+$font-size-xl: 1.25rem;   // 20px
+$font-size-2xl: 1.5rem;   // 24px
+
+// Line heights
+$line-height-normal: 1.5;
+$line-height-tight: 1.25;
+$line-height-loose: 1.75;
+
+// Font weights
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+// Text colors
+$text-color-default: #333;
+$text-color-muted: #666;
+$text-color-light: #999;
+
+// Base typography
+body {
+  font-family: $font-primary;
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+  color: $text-color-default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-primary;
+  font-weight: $font-weight-bold;
+  color: $text-color-default;
+  margin: 0 0 0.5em 0;
+  line-height: $line-height-tight;
+}
+
+h1 { font-size: $font-size-2xl; }
+h2 { font-size: $font-size-xl; }
+h3 { font-size: $font-size-lg; }
+h4 { font-size: $font-size-md; }
+h5 { font-size: $font-size-sm; }
+h6 { font-size: $font-size-xs; }
+
+// Paragraphs
+p {
+  margin: 0 0 1em 0;
+  font-size: $font-size-md;
+  color: $text-color-default;
+  line-height: $line-height-normal;
+}
+
+// Links
+a {
+  color: #007bff;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    color: color.scale(#007bff, $lightness: 10%);
+  }
+}
+
+// Utility classes
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.text-muted { color: $text-color-muted; }
+.text-light { color: $text-color-light; }
