@@ -10,6 +10,7 @@ import Registration from '../pages/auth/Registration.jsx';
 import Unauthorized from '../pages/auth/Unauthorized.jsx';
 
 // Dashboard Pages
+import LandingPage from '../pages/landingPage/landingPage.jsx';
 import Dashboard from '../pages/dashboard/Dashboard.jsx';
 import AdminDashboard from '../pages/dashboard/AdminDashboard.jsx';
 import Kanban from '../pages/kanban/Kanban.jsx';
