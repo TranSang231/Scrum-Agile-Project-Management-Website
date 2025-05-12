@@ -15,7 +15,6 @@ import AdminDashboard from '../pages/dashboard/AdminDashboard.jsx';
 import Kanban from '../pages/kanban/Kanban.jsx';
 import Backlog from '../pages/backlog/Backlog.jsx';
 import Project from '../pages/project/Project.jsx';
-import ProjectDetail from '../components/project/DetailProjectForm.jsx';
 
 function AppRouter() {
   return (
@@ -28,7 +27,6 @@ function AppRouter() {
           <Route path="/register" element={<Registration />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/detail" element={<ProjectDetail />} />
 
           {/* Protected Routes */}
           <Route

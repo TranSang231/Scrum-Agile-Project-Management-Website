@@ -1,38 +1,24 @@
-import React from 'react';
-import '../../assets/styles/components/project/DetailProjectForm.scss';
+import React, { useState } from 'react';
+import CreateProjectForm from './CreateProjectForm';
+import '../../assets/styles/components/project/detailProjectForm.scss';
 
-// Mock data cho demo trực tiếp
-const mockProject = {
-    id: "PROJ-2023-001",
-    name: "E-commerce Platform Redesign",
-    description: "Dự án này bao gồm việc thiết kế lại toàn bộ giao diện người dùng cho nền tảng thương mại điện tử, cải thiện trải nghiệm mua sắm, tối ưu hóa quy trình thanh toán, và tích hợp các phương thức thanh toán mới. Dự án cũng bao gồm thiết kế responsive cho các thiết bị di động và máy tính bảng.",
-    project_type: "web",
-    goal: "Tăng tỷ lệ chuyển đổi lên 25% và giảm tỷ lệ bỏ giỏ hàng xuống 15% trong vòng 3 tháng sau khi ra mắt. Tăng thời gian người dùng ở lại trang web và cải thiện tỷ lệ tương tác với sản phẩm.",
-    client: "TechRetail Solutions Inc.",
+const ProjectDetail = ({ project, onClose, onUpdate }) => {
+    const [isEditMode, setIsEditMode] = useState(false);
 
-    product_owner_email: "sarah.johnson@techretail.com",
-    scrum_master_email: "michael.chen@ourcompany.com",
-    team_members: [
-        "david.wilson@ourcompany.com",
-        "emily.parker@ourcompany.com",
-        "alex.rodriguez@ourcompany.com",
-        "natalie.kim@ourcompany.com",
-        "kevin.nguyen@ourcompany.com"
-    ],
-    team_size: 7,
+    if (!project) return null; // Không render nếu không có dữ liệu dự án
 
-    start_date: "2023-09-15",
-    end_date: "2024-02-28",
-    status: "active",
-    priority: "high",
-    domain: "recommerce",
-    budget: 145000,
+    // Nếu đang ở chế độ Edit, hiển thị form chỉnh sửa
+    if (isEditMode) {
+        return (
+            <CreateProjectForm
+                project={project}
+                onClose={() => setIsEditMode(false)}
+                onSubmit={onUpdate}
+            />
+        );
+    }
 
-    notes: "Dự án này là ưu tiên cao của khách hàng vì họ đang lên kế hoạch cho chiến dịch marketing lớn vào tháng 3/2024. Cần đảm bảo ưu tiên các tính năng giỏ hàng và thanh toán trước khi phát triển các tính năng bổ sung khác. Đã nhận được feedback từ người dùng về các vấn đề UX hiện tại cần được giải quyết."
-};
-
-const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Close clicked') }) => {
-    // Format dates nếu cần
+    // Format dates
     const formatDate = (dateString) => {
         if (!dateString) return '';
         return new Date(dateString).toLocaleDateString();
@@ -62,6 +48,8 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
 
     // Format project type
     const getProjectTypeLabel = (type) => {
+        if (!type) return 'Not specified';
+
         const typeMap = {
             'enterprise': 'Enterprise Software',
             'web': 'Web Application',
@@ -74,20 +62,88 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
             'data_analysis': 'Data Analysis Software',
             'other': 'Other'
         };
+        // Xử lý nếu project type chứa "other:"
+        if (type && type.startsWith('other:')) {
+            return type.replace('other:', '').trim();
+        }
         return typeMap[type] || type;
     };
 
-    // Format domain
+    // Format domain với định dạng chữ cái đầu viết hoa, chữ cái còn lại viết thường
     const getDomainLabel = (domain) => {
+        if (!domain) return 'Not specified';
+
+        // Hàm để chuyển đổi chuỗi sang dạng Capitalize (viết hoa chữ cái đầu tiên)
+        const capitalize = (str) => {
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        };
+
         const domainMap = {
             'education': 'Education',
             'health': 'Health',
             'finance': 'Finance',
+            'ecommerce': 'E-commerce',
             'recommerce': 'E-commerce',
             'other': 'Other'
         };
-        return domainMap[domain] || domain;
+
+        // Xử lý nếu domain chứa "other:"
+        if (domain.toLowerCase().startsWith('other:')) {
+            // Lấy phần sau other: và chuyển sang Capitalize
+            const customDomain = domain.substring(6).trim();
+            return customDomain ? capitalize(customDomain) : 'Other';
+        }
+
+        // Xử lý các domain thông thường từ domainMap
+        return domainMap[domain.toLowerCase()] || capitalize(domain);
     };
+
+    // Format role
+    const getRoleLabel = (role) => {
+        if (!role) return 'Not specified';
+
+        const roleMap = {
+            'developer': 'Developer',
+            'designer': 'Designer',
+            'tester': 'QA Tester',
+            'analyst': 'Business Analyst',
+            'devops': 'DevOps',
+            'other': 'Other'
+        };
+        return roleMap[role.toLowerCase()] || role;
+    };
+
+    // Xử lý clients - có thể có nhiều clients
+    const getClientList = () => {
+        if (!project.client) return [];
+        return project.client.split(',').map(client => client.trim()).filter(Boolean);
+    };
+
+    // Xử lý team members với roles
+    const getTeamMembersWithRoles = () => {
+        if (!project.team_members_emails || !project.team_members_emails.length) return [];
+
+        // Kết hợp emails với roles nếu có
+        if (project.team_members && project.team_members.length) {
+            return project.team_members_emails.map((email, index) => {
+                const memberInfo = project.team_members.find(m => m.email === email) ||
+                    (project.team_members[index] ? { role: project.team_members[index].role } : null);
+                return {
+                    email,
+                    role: memberInfo ? memberInfo.role : 'developer' // Mặc định là developer nếu không có role
+                };
+            });
+        }
+
+        // Nếu không có thông tin role, gán mặc định là developer
+        return project.team_members_emails.map(email => ({
+            email,
+            role: 'developer'
+        }));
+    };
+
+    const clients = getClientList();
+    const teamMembers = getTeamMembersWithRoles();
 
     return (
         <div className="project-detail">
@@ -123,7 +179,9 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
                         <div className="project-detail__row">
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Project Type</label>
-                                <div className="project-detail__value">{getProjectTypeLabel(project.project_type)}</div>
+                                <div className="project-detail__value">
+                                    {getProjectTypeLabel(project.project_type)}
+                                </div>
                             </div>
                         </div>
 
@@ -139,7 +197,19 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
                         <div className="project-detail__row">
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Client</label>
-                                <div className="project-detail__value">{project.client || 'No client specified'}</div>
+                                <div className="project-detail__value project-detail__value--tag-container">
+                                    {clients.length > 0 ? (
+                                        <div className="project-detail__tags">
+                                            {clients.map((client, index) => (
+                                                <span key={index} className="project-detail__email-tag">
+                                                    {client}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        'No client specified'
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -150,27 +220,48 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
                         <div className="project-detail__row">
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Product Owner</label>
-                                <div className="project-detail__value">{project.product_owner_email || 'Not assigned'}</div>
+                                <div className="project-detail__value project-detail__value--tag-container">
+                                    {project.product_owner_email ? (
+                                        <span className="project-detail__email-tag">
+                                            {project.product_owner_email}
+                                        </span>
+                                    ) : (
+                                        'Not assigned'
+                                    )}
+                                </div>
                             </div>
                         </div>
 
                         <div className="project-detail__row">
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Scrum Master</label>
-                                <div className="project-detail__value">{project.scrum_master_email || 'Not assigned'}</div>
+                                <div className="project-detail__value project-detail__value--tag-container">
+                                    {project.scrum_master_email ? (
+                                        <span className="project-detail__email-tag">
+                                            {project.scrum_master_email}
+                                        </span>
+                                    ) : (
+                                        'Not assigned'
+                                    )}
+                                </div>
                             </div>
                         </div>
 
                         <div className="project-detail__row">
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Team Members</label>
-                                <div className="project-detail__value">
-                                    {project.team_members && project.team_members.length > 0 ? (
+                                <div className="project-detail__value project-detail__value--tag-container">
+                                    {teamMembers.length > 0 ? (
                                         <div className="project-detail__tags">
-                                            {project.team_members.map((member, index) => (
-                                                <span key={index} className="project-detail__tag">
-                                                    {member}
-                                                </span>
+                                            {teamMembers.map((member, index) => (
+                                                <div key={index} className="project-detail__member-tag">
+                                                    <span className="project-detail__member-email">
+                                                        {member.email}
+                                                    </span>
+                                                    <span className="project-detail__member-role">
+                                                        {getRoleLabel(member.role)}
+                                                    </span>
+                                                </div>
                                             ))}
                                         </div>
                                     ) : (
@@ -206,14 +297,14 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
                         <div className="project-detail__row project-detail__row--three-column">
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Status</label>
-                                <div className={`project-detail__value project-detail__status project-detail__status--${project.status}`}>
+                                <div className={`project-detail__status project-detail__status--${project.status}`}>
                                     {getStatusLabel(project.status)}
                                 </div>
                             </div>
 
                             <div className="project-detail__field">
                                 <label className="project-detail__label">Priority</label>
-                                <div className={`project-detail__value project-detail__priority project-detail__priority--${project.priority}`}>
+                                <div className={`project-detail__priority project-detail__priority--${project.priority}`}>
                                     {getPriorityLabel(project.priority)}
                                 </div>
                             </div>
@@ -247,7 +338,12 @@ const ProjectDetail = ({ project = mockProject, onClose = () => console.log('Clo
                 </div>
 
                 <div className="project-detail__footer">
-                    <button className="project-detail__button" onClick={onClose}>Close</button>
+                    <button className="project-detail__button project-detail__button--secondary" onClick={onClose}>
+                        Close
+                    </button>
+                    <button className="project-detail__button project-detail__button--primary" onClick={() => setIsEditMode(true)}>
+                        Edit Project
+                    </button>
                 </div>
             </div>
         </div>

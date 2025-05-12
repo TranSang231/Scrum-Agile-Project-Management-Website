@@ -1,3 +1,6 @@
+// Import shared styles
+@use "../project/projectForm" as forms;
+
 .project-detail {
     position: fixed;
     top: 0;
@@ -10,65 +13,32 @@
     z-index: 1000;
 
     &__overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
+        @extend %form-overlay;
     }
 
     &__content {
-        position: relative;
-        background-color: white;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 800px;
-        max-height: 90vh;
-        overflow-y: auto;
-        z-index: 1;
+        @extend %form-content;
     }
 
     &__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        border-bottom: 1px solid #e2e8f0;
-        position: sticky;
-        top: 0;
-        background-color: white;
-        z-index: 10;
+        @extend %form-header;
     }
 
     &__title {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-        color: #334155;
+        @extend %form-title;
     }
 
     &__close {
-        background: none;
-        border: none;
-        color: #64748b;
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 50%;
-        
-        &:hover {
-            background-color: #f1f5f9;
-            color: #334155;
-        }
+        @extend %form-close-btn;
     }
 
     &__body {
-        padding: 20px;
+        @extend %form-body;
     }
 
     &__section {
-        margin-bottom: 30px;
-        
+        margin-bottom: 25px;
+
         &:last-child {
             margin-bottom: 0;
         }
@@ -84,87 +54,142 @@
     }
 
     &__row {
-        margin-bottom: 20px;
-        
+        margin-bottom: 15px;
+
         &:last-child {
             margin-bottom: 0;
         }
 
         &--two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            @extend %form-row;
         }
 
         &--three-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
+            @extend %form-row;
+
+            >div {
+                flex: 1;
+            }
         }
     }
 
     &__field {
-        display: flex;
-        flex-direction: column;
+        @extend %form-group;
+        margin-bottom: 0;
     }
 
     &__label {
-        font-size: 14px;
-        font-weight: 500;
-        color: #64748b;
-        margin-bottom: 6px;
+        @extend %form-label;
     }
 
     &__value {
-        font-size: 16px;
-        color: #334155;
-        background-color: #f8fafc;
-        padding: 10px;
-        border-radius: 6px;
-        min-height: 42px;
-        
+        @extend %form-value;
+
         &--multiline {
-            white-space: pre-line;
-            min-height: 80px;
+            @extend %form-value-multiline;
+        }
+
+        &--tag-container {
+            min-height: auto;
+            padding: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
         }
     }
 
     &__tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
+        width: 100%;
     }
 
     &__tag {
+        @extend %form-tag;
+        margin: 2px;
         background-color: #f1f5f9;
         color: #334155;
         padding: 4px 10px;
         border-radius: 20px;
         font-size: 14px;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__email-tag {
+        @extend %form-tag;
+        margin: 2px;
+        background-color: #f1f5f9;
+        color: #334155;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__client-tag {
+        @extend %form-tag;
+    }
+
+    &__member-tag {
+        display: flex;
+        align-items: center;
+        margin: 4px;
+        background-color: #f1f5f9;
+        border-radius: 20px;
+        overflow: hidden;
+        max-width: 100%;
+        height: 28px;
+    }
+
+    &__member-email {
+        padding: 0 10px;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+        white-space: nowrap;
+    }
+
+    &__member-role {
+        height: 28px;
+        padding: 0 10px;
+        border-left: 1px solid #e2e8f0;
+        background-color: #e2e8f0;
+        font-size: 12px;
+        color: #334155;
+        white-space: nowrap;
+
+        display: flex;
+        align-items: center;     // Căn giữa theo chiều dọc
+        justify-content: center; // Căn giữa theo chiều ngang
+        text-align: center; 
     }
 
     &__status {
-        display: inline-block;
         padding: 10px;
         border-radius: 4px;
         font-weight: 500;
-        
+
         &--active {
             background-color: #dcfce7;
             color: #166534;
         }
-        
+
         &--completed {
             background-color: #dbeafe;
             color: #1e40af;
         }
-        
+
         &--on-hold {
             background-color: #fef9c3;
             color: #854d0e;
         }
-        
+
         &--cancelled {
             background-color: #fee2e2;
             color: #b91c1c;
@@ -172,26 +197,25 @@
     }
 
     &__priority {
-        display: inline-block;
         padding: 10px;
         border-radius: 4px;
         font-weight: 500;
-        
+
         &--low {
             background-color: #f3f4f6;
             color: #4b5563;
         }
-        
+
         &--medium {
             background-color: #fef9c3;
             color: #854d0e;
         }
-        
+
         &--high {
             background-color: #ffedd5;
             color: #9a3412;
         }
-        
+
         &--critical {
             background-color: #fee2e2;
             color: #b91c1c;
@@ -199,24 +223,18 @@
     }
 
     &__footer {
-        padding: 20px;
-        border-top: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: flex-end;
+        @extend %form-footer;
     }
 
     &__button {
-        background-color: #0f172a;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        
-        &:hover {
-            background-color: #1e293b;
+        @extend %form-button;
+
+        &--primary {
+            @extend %form-button-primary;
+        }
+
+        &--secondary {
+            @extend %form-button-secondary;
         }
     }
 }
@@ -225,15 +243,20 @@
 @media (max-width: 768px) {
     .project-detail {
         &__content {
-            width: 90%;
+            width: 95%;
         }
-        
+
         &__row {
+
             &--two-column,
             &--three-column {
-                grid-template-columns: 1fr;
+                flex-direction: column;
                 gap: 15px;
             }
+        }
+
+        &__member-email {
+            max-width: 150px;
         }
     }
 }

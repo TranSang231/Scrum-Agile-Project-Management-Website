@@ -1,3 +1,5 @@
+// Import shared styles
+@use "../project/projectForm" as forms;
 @use "../project/recentEmail" as *;
 
 .create-project-form {
@@ -12,190 +14,140 @@
     z-index: 1000;
 
     &__overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
+        @extend %form-overlay;
     }
 
     &__content {
-        position: relative;
-        background-color: white;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 600px;
-        max-height: 90vh;
-        overflow-y: auto;
-        z-index: 1;
+        @extend %form-content;
     }
 
     &__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        border-bottom: 1px solid #e2e8f0;
+        @extend %form-header;
     }
 
     &__title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #334155;
+        @extend %form-title;
     }
 
     &__close {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-        color: #64748b;
-        transition: color 0.2s;
-
-        &:hover {
-            color: #334155;
-        }
+        @extend %form-close-btn;
     }
 
     &__body {
-        padding: 20px;
+        @extend %form-body;
     }
 
     &__group {
-        margin-bottom: 20px;
-    }
+        @extend %form-group;
 
-    &__row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        select {
+        // Loại bỏ mũi tên mặc định
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        
+        // Thêm mũi tên tùy chỉnh
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        
+        // Thêm padding bên phải để không bị chồng lên mũi tên
+        padding-right: 30px;
+        }
+
+        // Loại bỏ mũi tên mặc định trên IE
+        select::-ms-expand {
+        display: none;
+        }
     }
 
     &__label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        color: #334155;
+        @extend %form-label;
     }
 
-    &__input,
-    &__textarea {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        font-size: 14px;
-        color: #334155;
-        transition: border-color 0.2s;
+    &__input {
+        @extend %form-input;
 
-        &:focus {
-            outline: none;
-            border-color: #000000;
+        &--nested {
+            margin-top: 8px;
         }
+    }
+
+    &__textarea {
+        @extend %form-textarea;
+    }
+
+    &__select {
+        @extend %form-select;
+    }
+
+    &__row {
+        @extend %form-row;
     }
 
     &__tags-input-container {
-        position: relative;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        background-color: white;
-        padding: 6px;
-        min-height: 45px;
-        
-        &:focus-within {
-            border-color: #000000;
-        }
+        @extend %form-tags-container;
     }
 
     &__tags-area {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
         align-items: center;
+        width: 100%;
     }
 
     &__tag {
-        background-color: #f1f5f9;
-        border-radius: 20px;
-        padding: 4px 10px;
-        display: inline-flex;
-        align-items: center;
-        font-size: 14px;
-    }
-
-    &__tag-remove {
-        background: none;
-        border: none;
-        margin-left: 6px;
-        cursor: pointer;
-        color: #64748b;
-        padding: 0;
-        font-size: 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        
-        &:hover {
-            color: #334155;
-        }
+        @extend %form-tag-removable;
     }
 
     &__tag-input {
-        border: none;
-        background: transparent;
         flex: 1;
-        min-width: 120px;
-        padding: 4px 6px;
+        border: none;
+        outline: none;
+        padding: 4px 0;
         font-size: 14px;
-        color: #334155;
+        min-width: 50px;
+    }
+
+    &__member-tag {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        margin: 2px;
+    }
+
+    &__role-select {
+        margin-left: 4px;
+        padding: 2px 20px 2px 8px;
+        font-size: 12px;
+        border: none;
+        border-left: 1px solid #e2e8f0;
+        background-color: #e2e8f0;
+        height: 28px;
         
+        // Chỉ làm cong góc bên phải, giữ nguyên góc bên trái
+        border-radius: 0 20px 20px 0;
+        
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 5px center;
+        cursor: pointer;
+
         &:focus {
             outline: none;
         }
     }
 
-    
-
-    &__textarea {
-        resize: vertical;
-    }
-
     &__actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        margin-top: 24px;
-    }
-
-    &__cancel,
-    &__submit {
-        padding: 10px 20px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
+        @extend %form-footer;
     }
 
     &__cancel {
-        background-color: #f1f5f9;
-        color: #64748b;
-        border: none;
-
-        &:hover {
-            background-color: #e2e8f0;
-        }
+        @extend %form-button-secondary;
     }
 
     &__submit {
-        background-color: #000000;
-        color: white;
-        border: none;
-
-        &:hover {
-            background-color: #1a1a1a;
-        }
+        @extend %form-button-primary;
     }
-} 
+}
