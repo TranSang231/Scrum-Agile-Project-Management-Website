@@ -13,7 +13,7 @@ import Unauthorized from '../pages/auth/Unauthorized.jsx';
 import LandingPage from '../pages/landingPage/landingPage.jsx';
 import Dashboard from '../pages/dashboard/Dashboard.jsx';
 import AdminDashboard from '../pages/dashboard/AdminDashboard.jsx';
-import Kanban from '../pages/kanban/Kanban.jsx';
+import Kanban from '../pages/kanban/kanban.jsx';
 import Backlog from '../pages/backlog/Backlog.jsx';
 import Project from '../pages/project/Project.jsx';
 

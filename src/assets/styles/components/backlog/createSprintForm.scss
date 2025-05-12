@@ -1,0 +1,213 @@
+@use "../../base/variables" as *;
+
+// Create Sprint Modal
+.create-sprint-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $creatSprintForm-color-backdrop;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 1rem;
+
+  // Modal Content Container
+  &__content {
+    background-color: $creatSprintForm-color-white;
+    border-radius: $creatSprintForm-border-radius;
+    width: 100%;
+    max-width: 550px;
+    max-height: calc(100vh - 2rem);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    animation: modal-appear 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+
+  // Modal Header
+  &__header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $creatSprintForm-color-border;
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $creatSprintForm-color-text;
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: $creatSprintForm-color-text-light;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color $creatSprintForm-transition-speed;
+    
+    &:hover {
+      background-color: $creatSprintForm-color-secondary;
+    }
+  }
+
+  // Modal Body
+  &__body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  // Modal Footer
+  &__footer {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid $creatSprintForm-color-border;
+  }
+
+  // Modal Buttons
+  &__button {
+    padding: 0.5rem 1rem;
+    border-radius: $creatSprintForm-border-radius;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color $creatSprintForm-transition-speed, opacity $creatSprintForm-transition-speed;
+    
+    &--primary {
+      background-color: $creatSprintForm-color-primary;
+      color: $creatSprintForm-color-white;
+      border: none;
+      
+      &:hover:not(:disabled) {
+        background-color: $creatSprintForm-color-primary-hover;
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+    
+    &--secondary {
+      background-color: $creatSprintForm-color-secondary;
+      color: $creatSprintForm-color-text;
+      border: none;
+      
+      &:hover {
+        background-color: $creatSprintForm-color-secondary-hover;
+      }
+    }
+  }
+}
+
+// Form Styles
+.create-sprint-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+
+    &--half {
+      flex: 1;
+    }
+  }
+
+  &__date-container {
+    display: flex;
+    gap: 1rem;
+    
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $creatSprintForm-color-text;
+  }
+
+  &__required {
+    color: $creatSprintForm-color-error;
+  }
+
+  &__input,
+  &__textarea {
+    padding: 0.625rem 0.75rem;
+    border: 1px solid $creatSprintForm-color-border;
+    border-radius: $creatSprintForm-border-radius;
+    font-size: 0.875rem;
+    color: $creatSprintForm-color-text;
+    transition: border-color $creatSprintForm-transition-speed;
+    
+    &:focus {
+      outline: none;
+      border-color: $creatSprintForm-color-primary;
+      box-shadow: 0 0 0 1px rgba($creatSprintForm-color-primary, 0.2);
+    }
+    
+    &--error {
+      border-color: $creatSprintForm-color-error;
+    }
+    
+    &::placeholder {
+      color: $creatSprintForm-color-text-light;
+    }
+  }
+
+  &__error {
+    font-size: 0.75rem;
+    color: $creatSprintForm-color-error;
+    margin-top: 0.25rem;
+  }
+
+  &__char-count {
+    font-size: 0.75rem;
+    color: $creatSprintForm-color-text-light;
+    text-align: right;
+    margin-top: 0.25rem;
+  }
+}
+
+// Modal Animation
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .create-sprint-modal {
+    padding: 0.5rem;
+    
+    &__content {
+      max-width: 100%;
+    }
+  }
+}
