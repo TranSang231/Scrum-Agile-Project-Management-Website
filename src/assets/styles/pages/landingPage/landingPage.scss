@@ -1,3 +1,5 @@
+@use "../../../styles/base/variables" as *;
+
 .landing-page {
     min-height: 100vh;
     display: flex;
@@ -42,7 +44,7 @@
     font-family: 'Poppins', 'Inter', Arial, Helvetica, sans-serif;
     font-size: 3.4rem;
     font-weight: 700;
-    color: #141414;
+    color: $dark-900;
     margin-bottom: 2.05rem;
     line-height: 1.03;
     letter-spacing: -0.012em;
@@ -59,7 +61,7 @@
   .landing-page__subtitle {
     max-width: 490px;
     margin: 0 auto 2.3rem auto;
-    color: #232323;
+    color: $dark-1000;
     font-family: 'Inter', Arial, Helvetica, sans-serif;
     font-size: 1.18rem;
     line-height: 1.62;
@@ -68,14 +70,14 @@
   
   .landing-page__button {
     padding: 0.85rem 2.5rem;
-    background: #141414;
-    color: #fff;
+    background: $dark-900;
+    color: $secondary-color;
     border: none;
     border-radius: 2rem;
     font-size: 1.06rem;
     font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 4px 22px rgba(0,0,0,0.07);
+    box-shadow: $box-shadow-light;
     transition: background 0.25s, transform 0.2s;
     letter-spacing: 0.01em;
     margin-top: 0.5rem;
@@ -91,7 +93,7 @@
   
   .landing-page__button:hover,
   .landing-page__button:focus {
-    background: #282828;
+    background: $dark-1100;
     transform: translateY(-2px) scale(1.04);
   }
   
