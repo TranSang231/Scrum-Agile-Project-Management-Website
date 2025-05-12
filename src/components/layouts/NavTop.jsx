@@ -4,15 +4,20 @@ import UserAvatar from "../../assets/images/UserAvatar.png"; // Đường dẫn 
 import info from "../../assets/images/info.png"; // Đường dẫn đến hình ảnh thông tin
 import alarm from "../../assets/images/alarm.png"; // Đường dẫn đến hình ảnh thông báo
 import Search from "../../assets/images/search.png"; // Đường dẫn đến hình ảnh tìm kiếm
+import logoutIcon from "../../assets/images/logout.png"; // Thêm đường dẫn đến icon logout
 
 // Nếu có react-router-dom, bỏ comment dòng này
 //import { useNavigate } from 'react-router-dom';
 
 const Navtop = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  
+  // Username có thể lấy từ API
+  const userName = "User_name"; // Đây là tên mẫu
+  
   // Nếu có react-router-dom, hãy bỏ comment dòng này
   //const navigate = useNavigate();
-
+  
   const handleProfile = () => {
     console.log('Navigating to profile page');
     // Nếu có react-router-dom:
@@ -20,7 +25,7 @@ const Navtop = () => {
     // Hoặc có thể dùng:
     window.location.href = '/profile';
   };
-
+  
   const handleLogout = () => {
     console.log('Logging out...');
     // Thêm logic đăng xuất tại đây
@@ -29,19 +34,17 @@ const Navtop = () => {
     // Hoặc có thể dùng:
     //window.location.href = '/login';
   };
-
+  
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
-
- 
+  
   const handleClickOutside = (e) => {
     if (!e.target.closest('.user-avatar-container')) {
       setShowDropdown(false);
     }
   };
-
-
+  
   React.useEffect(() => {
     if (showDropdown) {
       document.addEventListener('click', handleClickOutside);
@@ -50,7 +53,7 @@ const Navtop = () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [showDropdown]);
-
+  
   return (
     <div className="navbar-top">
       <div className="search-container">
@@ -59,6 +62,7 @@ const Navtop = () => {
         </div>
         <input type="text" placeholder="Search" className="search-input" />
       </div>
+      
       <div className="navbar-actions-container">
         <div className="nav-action">
           <img src={alarm} alt="noti" className="icon-image" />
@@ -66,6 +70,7 @@ const Navtop = () => {
         <div className="nav-action">
           <img src={info} alt="info" className="icon-image" />
         </div>
+        
         <div className="user-avatar-container">
           <div className="user-avatar" onClick={toggleDropdown}>
             <img src={UserAvatar} alt="UserAvatar" />
@@ -73,11 +78,30 @@ const Navtop = () => {
           
           {showDropdown && (
             <div className="user-dropdown">
+              <div className="dropdown-header">
+                <div className="dropdown-user-avatar">
+                  <img src={UserAvatar} alt="UserAvatar" />
+                </div>
+                <div className="dropdown-user-info">
+                  <div className="dropdown-username">{userName}</div>
+                  <div className="dropdown-user-role">User</div>
+                </div>
+              </div>
+              
+              <div className="dropdown-divider"></div>
+              
               <button className="dropdown-item" onClick={handleProfile}>
-                Profile
+                <div className="dropdown-item-icon">
+                  <img src={UserAvatar} alt="Profile" className="dropdown-icon-image" />
+                </div>
+                <span>Profile</span>
               </button>
+              
               <button className="dropdown-item" onClick={handleLogout}>
-                Logout
+                <div className="dropdown-item-icon">
+                  <img src={logoutIcon} alt="Logout" className="dropdown-icon-image" />
+                </div>
+                <span>Logout</span>
               </button>
             </div>
           )}
