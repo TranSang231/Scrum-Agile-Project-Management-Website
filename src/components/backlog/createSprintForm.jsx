@@ -5,7 +5,6 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
   // Form state
   const [formData, setFormData] = useState({
     sprintName: '',
-    projectId: '',
     startDate: '',
     endDate: '',
     sprintGoal: ''
@@ -59,13 +58,6 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
     // Sprint Name validation
     if (!formData.sprintName.trim()) {
       newErrors.sprintName = 'Sprint name is required';
-    }
-
-    // Project ID validation
-    if (!formData.projectId) {
-      newErrors.projectId = 'Project ID is required';
-    } else if (isNaN(Number(formData.projectId))) {
-      newErrors.projectId = 'Project ID must be a number';
     }
 
     // Start Date validation
@@ -148,25 +140,6 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
               />
               {errors.sprintName && (
                 <div className="create-sprint-form__error">{errors.sprintName}</div>
-              )}
-            </div>
-
-            {/* Project ID Field */}
-            <div className="create-sprint-form__field">
-              <label htmlFor="projectId" className="create-sprint-form__label">
-                Origin Board / Project ID <span className="create-sprint-form__required">*</span>
-              </label>
-              <input
-                type="number"
-                id="projectId"
-                name="projectId"
-                className={`create-sprint-form__input ${errors.projectId ? 'create-sprint-form__input--error' : ''}`}
-                placeholder="Enter project ID"
-                value={formData.projectId}
-                onChange={handleChange}
-              />
-              {errors.projectId && (
-                <div className="create-sprint-form__error">{errors.projectId}</div>
               )}
             </div>
 
