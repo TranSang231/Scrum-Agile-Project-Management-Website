@@ -13,7 +13,6 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
   // Form state initialized with current sprint data or defaults
   const [formData, setFormData] = useState({
     name: '',
-    boardId: '',
     startDate: '',
     endDate: '',
     goal: ''
@@ -35,7 +34,6 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
     if (isOpen && currentSprint) {
       setFormData({
         name: currentSprint.name || '',
-        boardId: currentSprint.boardId || '',
         startDate: currentSprint.startDate || '',
         endDate: currentSprint.endDate || '',
         goal: currentSprint.goal || ''
@@ -102,13 +100,6 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
     // Sprint Name validation
     if (!formData.name.trim()) {
       newErrors.name = 'Sprint name is required';
-    }
-
-    // Board ID validation
-    if (!formData.boardId) {
-      newErrors.boardId = 'Project ID is required';
-    } else if (isNaN(Number(formData.boardId))) {
-      newErrors.boardId = 'Project ID must be a number';
     }
 
     // Date validations
@@ -197,25 +188,6 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
               />
               {errors.name && (
                 <div className="edit-sprint-form__error">{errors.name}</div>
-              )}
-            </div>
-
-            {/* Project ID Field */}
-            <div className="edit-sprint-form__field">
-              <label htmlFor="boardId" className="edit-sprint-form__label">
-                Origin Board / Project ID <span className="edit-sprint-form__required">*</span>
-              </label>
-              <input
-                type="number"
-                id="boardId"
-                name="boardId"
-                className={`edit-sprint-form__input ${errors.boardId ? 'edit-sprint-form__input--error' : ''}`}
-                placeholder="Enter project ID"
-                value={formData.boardId}
-                onChange={handleChange}
-              />
-              {errors.boardId && (
-                <div className="edit-sprint-form__error">{errors.boardId}</div>
               )}
             </div>
 
