@@ -60,7 +60,7 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
       newErrors.sprintName = 'Sprint name is required';
     }
 
-    // Start Date validation
+    // Start Date
     if (!formData.startDate) {
       newErrors.startDate = 'Start date is required';
     }
