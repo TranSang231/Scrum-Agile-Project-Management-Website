@@ -1,29 +1,26 @@
-@use "../base/variables" as *;
-@use "../components//button" as *;
+@use "../../base/variables" as *;
+@use "../../components/button" as *;
 
 .add-task-container {
     position: fixed;
-    /* Để nó ghi đè lên trang */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba($dark-800, 0.2);
-    /* Lớp nền mờ */
+    background: rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    /* Ghi đè trên tất cả */
 
     form {
-        background: $secondary-color;
+        background: white;
         padding: 30px;
         border-radius: 12px;
         width: 500px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 5px 25px rgba($dark-800, 0.2);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
         animation: fadeIn 0.3s ease;
     }
 
@@ -42,10 +39,11 @@
         }
 
         input,
-        select {
+        select,
+        textarea {
             width: 100%;
             padding: 10px;
-            border: 1px solid $dark-200;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
         }
@@ -56,14 +54,14 @@
 
             label {
                 cursor: pointer;
-                color: $fourthary-color;
+                color: #3b82f6;
                 font-weight: 500;
             }
 
             .file-name {
                 margin-top: 5px;
                 font-size: 13px;
-                color: $dark-500;
+                color: #64748b;
             }
         }
     }
@@ -85,21 +83,36 @@
     }
 
     .error-message {
-        color: $invalid-color;
-        margin-top: 5px;
-        font-size: 13px;
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .time-group {
+        display: flex;
+        gap: 10px;
+
+        input[type="date"] {
+            flex: 1;
+        }
+
+        .time-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 120px;
+        }
     }
 }
 
-/* Hiệu ứng xuất hiện */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: translateY(-20px);
     }
 
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
     }
 }

@@ -1,15 +1,38 @@
+import React, { useState } from "react";
 import '../../assets/styles/pages/backlog/backlogColumn.scss';
-import React from "react";
-import { useState } from "react";
 import TaskCard from "../../components/TaskCard.jsx";
-import EditTaskForm from "../../components/EditTaskForm.jsx";
+import EditTaskForm from "../../components/backlog/EditTaskForm.jsx";
+import EditEpicForm from "../../components/backlog/EditEpicForm.jsx";
+import EditUserStoryForm from "../../components/backlog/EditUserStoryForm.jsx";
+
+// Dữ liệu mẫu
+const sampleProjects = [
+    { id: 'proj1', name: 'Website Redesign' },
+    { id: 'proj2', name: 'Mobile App Development' },
+    { id: 'proj3', name: 'CRM Integration' },
+];
+
+const sampleUsers = [
+    { id: 'user1', name: 'John Doe', username: 'johndoe' },
+    { id: 'user2', name: 'Jane Smith', username: 'janesmith' },
+    { id: 'user3', name: 'Mike Johnson', username: 'mikejohnson' },
+];
 
 const BacklogColumn = () => {
-    const [isCreatingTask, setCreatingTask] = useState(false);
+    const [isCreatingEpic, setCreatingEpic] = useState(false);
+    const [isCreatingUserStory, setCreatingUserStory] = useState(false);
     const [selectedColumnId, setSelectedColumnId] = useState(null);
-    const handleCreateTask = (columnId) => {
+
+    const currentUser = sampleUsers[0]; // Giả định người dùng đầu tiên là người dùng hiện tại
+
+    const handleCreateEpic = (columnId) => {
         setSelectedColumnId(columnId);
-        setCreatingTask(true);
+        setCreatingEpic(true);
+    }
+
+    const handleCreateUserStory = (columnId) => {
+        setSelectedColumnId(columnId);
+        setCreatingUserStory(true);
     }
 
     const [columns, setColumns] = useState([
@@ -44,7 +67,7 @@ const BacklogColumn = () => {
 
     return (
         <div className="backlog__column">
-            <div className="backlog__column-content">  
+            <div className="backlog__column-content">
                 <div className="backlog__column-header">
                     <h2 className="backlog__column-title">Product Backlog</h2>
                     <div className="backlog__column-actions">
@@ -60,46 +83,89 @@ const BacklogColumn = () => {
                         </button>
                     </div>
                 </div>
-                
+
                 <div className="backlog__task-list">
-                {columns[0].tasks.map((task) => (
-                    <TaskCard
-                        key={task.id}
-                        task={task}
-                        onEditSave={(updatedTask) => {
-                            setColumns(columns.map(col => 
-                                col.id === columns[0].id 
-                                    ? { ...col, tasks: col.tasks.map(t => t.id === task.id ? updatedTask : t) } 
-                                    : col
-                            ));
-                        }}
-                        onDelete={(taskId) => {
-                            setColumns(columns.map(col => 
-                                col.id === columns[0].id 
-                                    ? { ...col, tasks: col.tasks.filter(t => t.id !== taskId) } 
-                                    : col
-                            ));
-                        }}
-                    />
-                ))}
+                    {columns[0].tasks.map((task) => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                            onEditSave={(updatedTask) => {
+                                setColumns(columns.map(col =>
+                                    col.id === columns[0].id
+                                        ? { ...col, tasks: col.tasks.map(t => t.id === task.id ? updatedTask : t) }
+                                        : col
+                                ));
+                            }}
+                            onDelete={(taskId) => {
+                                setColumns(columns.map(col =>
+                                    col.id === columns[0].id
+                                        ? { ...col, tasks: col.tasks.filter(t => t.id !== taskId) }
+                                        : col
+                                ));
+                            }}
+                        />
+                    ))}
                 </div>
             </div>
 
-            <button className="backlog__column-button backlog__column-button--create" onClick={() => handleCreateTask(columns[0].id)}>Create Task</button>
+            <div className="backlog__column-buttons">
+                <button
+                    className="backlog__column-button backlog__column-button--create backlog__column-button--epic"
+                    onClick={() => handleCreateEpic(columns[0].id)}
+                >
+                    Create Epic
+                </button>
+                <button
+                    className="backlog__column-button backlog__column-button--create backlog__column-button--story"
+                    onClick={() => handleCreateUserStory(columns[0].id)}
+                >
+                    Create User Story
+                </button>
+            </div>
 
-            {isCreatingTask && (
-                <EditTaskForm
+            {isCreatingEpic && (
+                <EditEpicForm
                     isCreating={true}
-                    onSave={(newTask) => {
+                    projects={sampleProjects}
+                    users={sampleUsers}
+                    currentUser={currentUser}
+                    onSave={(newEpic) => {
                         setColumns(columns.map(col =>
-                          col.id === selectedColumnId
-                            ? { ...col, tasks: [...col.tasks, newTask] }
-                            : col
+                            col.id === selectedColumnId
+                                ? { ...col, tasks: [...col.tasks, newEpic] }
+                                : col
                         ));
-                        setCreatingTask(false);
-                      }}
-                      onCancel={() => setCreatingTask(false)}
-                    />
+                        setCreatingEpic(false);
+                    }}
+                    onCancel={() => setCreatingEpic(false)}
+                />
+            )}
+
+            {isCreatingUserStory && (
+                <EditUserStoryForm
+                    isCreating={true}
+                    projects={sampleProjects}
+                    users={sampleUsers}
+                    priorities={[
+                        { value: 'low', label: 'Low' },
+                        { value: 'medium', label: 'Medium' },
+                        { value: 'high', label: 'High' }
+                    ]}
+                    onSave={(newTask) => {
+                        const userStory = {
+                            ...newTask,
+                            type: 'user-story',
+                            typeLabel: 'USER STORY'
+                        };
+                        setColumns(columns.map(col =>
+                            col.id === selectedColumnId
+                                ? { ...col, tasks: [...col.tasks, userStory] }
+                                : col
+                        ));
+                        setCreatingUserStory(false);
+                    }}
+                    onCancel={() => setCreatingUserStory(false)}
+                />
             )}
         </div>
     );

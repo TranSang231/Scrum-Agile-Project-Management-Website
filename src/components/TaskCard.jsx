@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import '../assets/styles/components/taskCard.scss';
 import DropdownMenu from './DropDownMenu';
-import EditTaskForm from './EditTaskForm';
+import EditTaskForm from './backlog/EditTaskForm';
 import "../../src/assets/styles/components/taskCard.scss";
 
 // Component TaskCard để hiển thị thông tin của một task

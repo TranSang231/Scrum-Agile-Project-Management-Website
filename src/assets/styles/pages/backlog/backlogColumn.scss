@@ -39,6 +39,14 @@
     }
 }
 
+// Thêm container mới cho nút Create Epic và Create User Story
+.backlog__column-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    width: 100%;
+}
+
 .backlog__column-button {
     &--icon {
         background: none;
@@ -55,18 +63,40 @@
     }
 
     &--create {
-        margin-top: 16px;
         padding: 8px 16px;
         background-color: #000000;
         color: white;
         border: none;
         border-radius: 6px;
         font-weight: 500;
+        font-size: 14px;
         cursor: pointer;
         transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1; // Để 2 nút có kích thước bằng nhau
 
         &:hover {
             background-color: #1a1a1a;
+        }
+    }
+    
+    // Style cho nút Epic - màu vàng thay vì màu hồng
+    &--epic {
+        background-color: #eab308; // Màu vàng
+        
+        &:hover {
+            background-color: #ca8a04; // Màu vàng đậm hơn khi hover
+        }
+    }
+    
+    // Style cho nút User Story
+    &--story {
+        background-color: #065f46;
+        
+        &:hover {
+            background-color: #064e3b;
         }
     }
 }
