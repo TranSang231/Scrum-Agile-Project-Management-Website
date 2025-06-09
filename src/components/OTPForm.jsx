@@ -1,4 +1,4 @@
-import { Message } from './Message';  // Giả sử bạn đã tạo Message component từ trước
+import { Message } from './Message';
 import React, { useState, useRef, useEffect } from 'react';
 import { FormHeader } from './FormHeader';
 import '../assets/styles/components/otpForm.scss'; 
@@ -11,22 +11,26 @@ const OTPInput = ({ otpCode, handleOtpChange }) => {
     inputRefs.current[0]?.focus();
   }, []);
 
-  const handleChange = (index, value) => {
-    const numericValue = value.replace(/[^0-9]/g, '');
+  const handleChange = (index, e) => {
+    const value = e.target.value;
     
-    if (numericValue) {
-      handleOtpChange(index, numericValue);
+    // Chỉ xử lý nếu giá trị nhập vào là số hoặc rỗng
+    if (value === '' || /^[0-9]$/.test(value)) {
+      // Cập nhật giá trị OTP
+      const newOtpCode = [...otpCode];
+      newOtpCode[index] = value;
       
-      // Tự động chuyển focus sang ô tiếp theo
-      if (index < otpCode.length - 1) {
+      // Cập nhật toàn bộ state OTP một lần duy nhất
+      handleOtpChange(newOtpCode);
+      
+      // Nếu là số và không phải ô cuối cùng, chuyển focus tới ô tiếp theo
+      if (value !== '' && index < otpCode.length - 1) {
         inputRefs.current[index + 1]?.focus();
       }
     }
   };
 
   const handleKeyDown = (index, e) => {
-    const currentValue = otpCode[index];
-    
     // Xử lý navigation bằng arrow keys
     if (e.key === 'ArrowRight' && index < otpCode.length - 1) {
       inputRefs.current[index + 1]?.focus();
@@ -35,33 +39,48 @@ const OTPInput = ({ otpCode, handleOtpChange }) => {
       inputRefs.current[index - 1]?.focus();
     }
 
-    // Xử lý phím Backspace/Delete
+    // Xử lý phím Backspace
     if (e.key === 'Backspace') {
-      if (!currentValue && index > 0) {
-        // Nếu ô hiện tại trống, xóa ô trước đó
-        handleOtpChange(index - 1, '');
+      const newOtpCode = [...otpCode];
+      
+      if (otpCode[index] === '' && index > 0) {
+        // Nếu ô hiện tại trống và không phải ô đầu tiên, focus vào ô trước đó
         inputRefs.current[index - 1]?.focus();
       } else {
         // Xóa nội dung ô hiện tại
-        handleOtpChange(index, '');
+        newOtpCode[index] = '';
+        handleOtpChange(newOtpCode);
       }
     }
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const pasteData = e.clipboardData
+    
+    // Lấy dữ liệu paste và lọc chỉ giữ lại các ký tự số
+    const pastedData = e.clipboardData
       .getData('text/plain')
       .replace(/[^0-9]/g, '')
       .slice(0, otpCode.length);
-    
-    pasteData.split('').forEach((char, i) => {
-      handleOtpChange(i, char);
-    });
-    
-    // Focus vào ô cuối cùng được paste
-    const lastPasteIndex = Math.min(pasteData.length - 1, otpCode.length - 1);
-    inputRefs.current[lastPasteIndex]?.focus();
+      
+    if (pastedData) {
+      // Tạo mảng OTP mới với giá trị mặc định là rỗng
+      const newOtpCode = Array(otpCode.length).fill('');
+      
+      // Điền dữ liệu paste vào mảng OTP mới
+      pastedData.split('').forEach((char, i) => {
+        if (i < otpCode.length) {
+          newOtpCode[i] = char;
+        }
+      });
+      
+      // Cập nhật state OTP một lần duy nhất
+      handleOtpChange(newOtpCode);
+      
+      // Focus vào ô tiếp theo sau dữ liệu paste hoặc ô cuối cùng
+      const focusIndex = Math.min(pastedData.length, otpCode.length - 1);
+      inputRefs.current[focusIndex]?.focus();
+    }
   };
 
   return (
@@ -73,12 +92,14 @@ const OTPInput = ({ otpCode, handleOtpChange }) => {
           type="text"
           className="otp-input"
           value={digit}
-          onChange={(e) => handleChange(index, e.target.value)}
+          onChange={(e) => handleChange(index, e)}
           onKeyDown={(e) => handleKeyDown(index, e)}
-          onPaste={handlePaste}
-          maxLength="1"
+          onPaste={(e) => handlePaste(e)}
+          maxLength={1}
           inputMode="numeric"
           autoComplete="one-time-code"
+          pattern="[0-9]*"
+          aria-label={`OTP digit ${index + 1}`}
         />
       ))}
     </div>
@@ -98,11 +119,9 @@ export const OtpForm = ({
   isLoading,
   setStep
 }) => {
-  // Handle OTP change for OTP input (array of digits)
-  const handleOtpChange = (index, value) => {
-    const updatedOtpCode = [...otpCode];
-    updatedOtpCode[index] = value;
-    setOtpCode(updatedOtpCode);
+  // Hàm cập nhật OTP với mảng mới
+  const handleOtpChange = (newOtpCode) => {
+    setOtpCode(newOtpCode);
   };
 
   return (
@@ -128,10 +147,6 @@ export const OtpForm = ({
         {/* Use OTPInput component */}
         <OTPInput otpCode={otpCode} handleOtpChange={handleOtpChange} />
 
-        {/* <p className="otp-info">
-          Check your email for the OTP code. If you don't see it, check your spam folder.
-        </p> */}
-
         <Message message={message} messageType={messageType} />
       </div>
 
@@ -139,7 +154,11 @@ export const OtpForm = ({
         <button type="button" className="back-button" onClick={() => setStep(1)}>
           Back
         </button>
-        <button type="submit" className="button button--form" disabled={isLoading}>
+        <button 
+          type="submit" 
+          className="button button--form" 
+          disabled={isLoading || otpCode.join('').length !== otpCode.length}
+        >
           {isLoading ? <span className="spinner"></span> : "Verify"}
         </button>
       </div>
