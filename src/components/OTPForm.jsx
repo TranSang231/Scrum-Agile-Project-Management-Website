@@ -95,7 +95,8 @@ export const OtpForm = ({
   handleResendOtp,
   message,
   messageType,
-  isLoading
+  isLoading,
+  setStep
 }) => {
   // Handle OTP change for OTP input (array of digits)
   const handleOtpChange = (index, value) => {
@@ -113,7 +114,7 @@ export const OtpForm = ({
           <label htmlFor="otpCode">OTP Code</label>
           <div className="resend-container">
             <button 
-              type="button button--form" 
+              type="button" 
               className="resend-button"
               onClick={handleResendOtp}
               disabled={isTimerActive}
@@ -127,9 +128,9 @@ export const OtpForm = ({
         {/* Use OTPInput component */}
         <OTPInput otpCode={otpCode} handleOtpChange={handleOtpChange} />
 
-        <p className="otp-info">
+        {/* <p className="otp-info">
           Check your email for the OTP code. If you don't see it, check your spam folder.
-        </p>
+        </p> */}
 
         <Message message={message} messageType={messageType} />
       </div>
