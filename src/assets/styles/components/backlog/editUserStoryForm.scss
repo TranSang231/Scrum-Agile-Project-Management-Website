@@ -1,0 +1,153 @@
+@use "../../components/project/projectForm.scss";
+
+.edit-user-story-form {
+    &__overlay {
+        @extend %form-overlay;
+    }
+
+    &__content {
+        @extend %form-content;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &__header {
+        @extend %form-header;
+    }
+
+    &__title {
+        @extend %form-title;
+        color: #065f46; // Changed from #3b82f6 (blue) to green
+    }
+
+    &__close {
+        @extend %form-close-btn;
+    }
+
+    &__body {
+        @extend %form-body;
+    }
+
+    &__group {
+        @extend %form-group;
+    }
+
+    &__label {
+        @extend %form-label;
+    }
+
+    &__input {
+        @extend %form-input;
+    }
+
+    &__textarea {
+        @extend %form-textarea;
+    }
+
+    &__select {
+        @extend %form-select;
+
+        &[multiple] {
+            height: 120px;
+        }
+    }
+
+    &__tags-input-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    &__tags-area {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        min-height: 40px;
+        padding: 4px 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background-color: white;
+        align-items: center;
+    }
+
+    &__tag {
+        display: inline-flex;
+        align-items: center;
+        background-color: #e9f0fc;
+        color: #0a3a6e;
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin: 4px;
+        font-size: 14px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__tag-remove {
+        background: none;
+        border: none;
+        color: #5a6273;
+        margin-left: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        line-height: 1;
+        padding: 0 2px;
+
+        &:hover {
+            color: #065f46;
+        }
+    }
+
+    &__tag-input {
+        flex-grow: 1;
+        border: none;
+        outline: none;
+        height: 30px;
+        padding: 4px;
+        min-width: 120px;
+        font-size: 14px;
+    }
+
+    &__error {
+        color: #ef4444;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    &__actions {
+        @extend %form-footer;
+    }
+
+    &__cancel {
+        @extend %form-button-secondary;
+    }
+
+    &__submit {
+        @extend %form-button-primary;
+        background-color: #065f46; // Changed from #3b82f6 (blue) to green
+
+        &:hover {
+            background-color: #064e3b; // Changed from #2563eb (darker blue) to darker green
+        }
+    }
+
+    &__file-upload {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            cursor: pointer;
+            color: #065f46; // Changed from #3b82f6 (blue) to green
+            font-weight: 500;
+        }
+
+        &-file {
+            margin-top: 5px;
+            font-size: 13px;
+            color: #64748b;
+        }
+    }
+}

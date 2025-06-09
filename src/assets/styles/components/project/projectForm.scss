@@ -1,3 +1,6 @@
+// Import module color
+@use "sass:color";
+
 // Shared styles for project forms
 $form-border-color: #e2e8f0;
 $form-bg-color: #fff;
@@ -151,7 +154,7 @@ $form-success-color: #10b981;
     color: white;
 
     &:hover {
-        background-color: darken($form-highlight-color, 5%);
+        background-color: color.adjust($form-highlight-color, $lightness: -5%);
     }
 }
 
@@ -162,7 +165,7 @@ $form-success-color: #10b981;
     color: $form-text-color;
 
     &:hover {
-        background-color: darken($form-hover-color, 5%);
+        background-color: color.adjust($form-hover-color, $lightness: -5%);
     }
 }
 

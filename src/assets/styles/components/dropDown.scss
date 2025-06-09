@@ -1,0 +1,82 @@
+@use '../base/variables' as *;
+
+.dropdown {
+  position: relative;
+  user-select: none;
+  
+  &__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+  }
+  
+  &__selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #64748b;
+    background-color: white;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: #cbd5e1;
+    }
+  }
+  
+  &__value {
+    flex-grow: 1;
+  }
+  
+  &__arrow {
+    transition: transform 0.2s ease;
+    
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+  
+  &__options {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  &__option {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+    
+    &:hover {
+      background-color: #f8fafc;
+    }
+    
+    &--active {
+      background-color: #f1f5f9;
+      font-weight: 500;
+    }
+    
+    &:first-child {
+      border-radius: 8px 8px 0 0;
+    }
+    
+    &:last-child {
+      border-radius: 0 0 8px 8px;
+    }
+  }
+}

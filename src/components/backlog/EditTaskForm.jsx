@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import '../assets/styles/components/editTaskForm.scss';
-import { FormHeader } from './FormHeader'; // Import FormHeader component   
-
+import '../../assets/styles/components/backlog/editTaskForm.scss';
+import { FormHeader } from '../FormHeader';
 function EditTaskForm({
     task,
     onSave,
     onCancel,
     isCreating = false,
-    projects = [],      // Danh sách projects từ props
-    users = [],         // Danh sách người dùng từ props
-    priorities = []     // Danh sách priority từ props
+    projects = [],
+    users = [],
+    priorities = []
 }) {
     const [editedTask, setEditedTask] = useState({
         ...(isCreating ? {
@@ -31,7 +30,7 @@ function EditTaskForm({
     const [fileNames, setFileNames] = useState([]);
     const [validationError, setValidationError] = useState('');
 
-    // Xử lý thay đổi file
+    // Handle file changes
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         setEditedTask(prev => ({
@@ -41,7 +40,7 @@ function EditTaskForm({
         setFileNames([...fileNames, ...files.map(file => file.name)]);
     };
 
-    // Xử lý submit form
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -53,7 +52,7 @@ function EditTaskForm({
         onSave(editedTask);
     };
 
-    // Xử lý chọn thời gian
+    // Handle time changes
     const handleTimeChange = (type, value) => {
         setEditedTask(prev => ({
             ...prev,
@@ -61,7 +60,7 @@ function EditTaskForm({
         }));
     };
 
-    // Xử lý chọn người   
+    // Handle select changes
     const handleSelectChange = (type, value) => {
         setEditedTask(prev => ({
             ...prev,
@@ -105,6 +104,17 @@ function EditTaskForm({
                     </select>
                 </div>
 
+                {/* Description */}
+                <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                        placeholder="Describe the task"
+                        value={editedTask.description}
+                        onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
+                        rows="4"
+                    ></textarea>
+                </div>
+
                 {/* Due Date/Time */}
                 <div className="form-group">
                     <label>Due Date/Time</label>
@@ -140,7 +150,7 @@ function EditTaskForm({
                         <option value="">Select Lead</option>
                         {users.map(user => (
                             <option key={user.id} value={user.id}>
-                                {user.name}
+                                {user.name || user.username}
                             </option>
                         ))}
                     </select>
@@ -194,7 +204,7 @@ function EditTaskForm({
                     >
                         {users.map(user => (
                             <option key={user.id} value={user.id}>
-                                {user.name}
+                                {user.name || user.username}
                             </option>
                         ))}
                     </select>
@@ -210,7 +220,7 @@ function EditTaskForm({
                         <option value="">Select Creator</option>
                         {users.map(user => (
                             <option key={user.id} value={user.id}>
-                                {user.name}
+                                {user.name || user.username}
                             </option>
                         ))}
                     </select>
@@ -236,7 +246,7 @@ function EditTaskForm({
                     >
                         Cancel
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                         className="button button--save">
                         {isCreating ? 'Create' : 'Save Changes'}
                     </button>

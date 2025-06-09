@@ -3,7 +3,7 @@ import "../../assets/styles/pages/kanban/kanban.scss";
 
 import NavLeft from '../../components/layouts/NavLeft.jsx';
 import NavTop from '../../components/layouts/NavTop.jsx';
-import EditTaskForm from '../../components/EditTaskForm.jsx';
+import EditTaskForm from '../../components/backlog/EditTaskForm.jsx';
 import KanbanColumn from './KanbanColumn.jsx';
 
 const Kanban = () => {

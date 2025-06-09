@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 import "../../assets/styles/pages/project/project.scss";
@@ -18,6 +18,70 @@ const toast = {
     info: (message) => console.info('INFO:', message)
 };
 
+// Time filter dropdown component
+const TimeFilterDropdown = ({ value, options, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
+    };
+
+    const handleSelect = (option) => {
+        onChange(option);
+        setIsOpen(false);
+    };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
+
+    return (
+        <div className="project__time-filter" ref={dropdownRef}>
+            <div className="project__time-filter-selected" onClick={toggleDropdown}>
+                <span className="project__time-filter-text">{value}</span>
+                <svg
+                    className={`project__time-filter-icon ${isOpen ? 'project__time-filter-icon--open' : ''}`}
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                >
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </div>
+
+            {isOpen && (
+                <div className="project__time-filter-options">
+                    {options.map((option) => (
+                        <div
+                            key={option}
+                            className={`project__time-filter-option ${option === value ? 'project__time-filter-option--active' : ''}`}
+                            onClick={() => handleSelect(option)}
+                        >
+                            {option}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 const Project = () => {
     const navigate = useNavigate();
@@ -27,6 +91,16 @@ const Project = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    // Time filter options
+    const timeFilterOptions = [
+        'Today',
+        'This week',
+        'This month',
+        'This quarter',
+        'This year',
+        'All time'
+    ];
 
     // Thêm state để quản lý việc hiển thị chi tiết dự án
     const [selectedProject, setSelectedProject] = useState(null);
@@ -92,7 +166,7 @@ const Project = () => {
             // setLoading(false);
 
             // Phần code gọi API thực tế - đang comment để sử dụng mockdata
-    
+
             const token = localStorage.getItem('access_token');
             if (!token) {
                 navigate('/login');
@@ -176,7 +250,7 @@ const Project = () => {
             // toast.success('Project created successfully!');
 
             // Phần code gọi API thực tế - đang comment để sử dụng mockdata
-            
+
             const token = localStorage.getItem('access_token');
             if (!token) {
                 throw new Error('No authentication token found');
@@ -201,7 +275,7 @@ const Project = () => {
             setProjects(prevProjects => [...prevProjects, newProject]);
             setShowCreateForm(false);
             toast.success('Project created successfully!');
-            
+
 
             setError(''); // Clear any previous errors
         } catch (err) {
@@ -225,7 +299,7 @@ const Project = () => {
             toast.success('Project updated successfully!');
 
             // Phần code gọi API thực tế - đang comment để sử dụng mockdata
-            
+
             const token = localStorage.getItem('access_token');
             if (!token) {
                 throw new Error('No authentication token found');
@@ -247,21 +321,27 @@ const Project = () => {
             }
 
             const resultProject = await response.json();
-            
+
             // Cập nhật danh sách dự án
-            setProjects(prev => 
+            setProjects(prev =>
                 prev.map(project => project.id === resultProject.id ? resultProject : project)
             );
-            
+
             // Cập nhật selected project để hiển thị thông tin mới nhất
             setSelectedProject(resultProject);
-            
+
             toast.success('Project updated successfully!');
-            
+
         } catch (err) {
             console.error('Error updating project:', err);
             toast.error(`Failed to update project: ${err.message}`);
         }
+    };
+
+    // Handler for time filter changes
+    const handleTimeFilterChange = (selectedFilter) => {
+        setTimeFilter(selectedFilter);
+        // You can add additional logic here to filter projects by time if needed
     };
 
     return (
@@ -272,12 +352,12 @@ const Project = () => {
                 <div className="project__container">
                     <div className="project__header">
                         <h1 className="project__title">Projects</h1>
-                        <div className="project__time-filter">
-                            <span className="project__time-filter-text">{timeFilter}</span>
-                            <svg className="project__time-filter-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
-                                <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                        </div>
+                        {/* Replace static time filter with dropdown component */}
+                        <TimeFilterDropdown
+                            value={timeFilter}
+                            options={timeFilterOptions}
+                            onChange={handleTimeFilterChange}
+                        />
                     </div>
 
                     <div className="project__content">

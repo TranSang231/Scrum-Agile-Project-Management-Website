@@ -53,7 +53,7 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
         team_size: 1,
         status: 'active',
         priority: 'medium',
-        domain: 'other',
+        domain: 'education',
         domain_other: '',
         budget: '',
         notes: '',
@@ -82,7 +82,7 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
             }
 
             // Extract clients from comma-separated string
-            const clients = project.client ? 
+            const clients = project.client ?
                 project.client.split(',').map(client => client.trim()).filter(Boolean) : [];
 
             // Process team members
@@ -213,7 +213,7 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
     const updateMemberRole = (email, role) => {
         setFormData(prev => ({
             ...prev,
-            team_members: prev.team_members.map(member => 
+            team_members: prev.team_members.map(member =>
                 member.email === email ? { ...member, role } : member
             )
         }));
@@ -253,7 +253,7 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
         e.preventDefault();
         const owner = users.find(u => u.email === formData.product_owner_email);
         const scrum = users.find(u => u.email === formData.scrum_master_email);
-        
+
         // Cập nhật logic xử lý team members
         const memberIds = formData.team_members
             .map(member => {
@@ -594,8 +594,8 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
                                                 ×
                                             </button>
                                         </span>
-                                        <select 
-                                            value={member.role} 
+                                        <select
+                                            value={member.role}
                                             onChange={(e) => updateMemberRole(member.email, e.target.value)}
                                             className="create-project-form__role-select"
                                         >
