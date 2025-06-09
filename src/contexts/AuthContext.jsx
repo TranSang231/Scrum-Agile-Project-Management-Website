@@ -28,21 +28,26 @@ export const AuthProvider = ({ children }) => {
       const { access, refresh } = tokenRes.data;
 
       // 2. Gọi API lấy thông tin user
-      const userRes = await axios.get('http://localhost:8000/api/auth/user/me/', {
+      const userRes = await axios.get('http://localhost:8000/api/profile/', {
         headers: { Authorization: `Bearer ${access}` }
       });
-      const { email: userEmail, role } = userRes.data;
+
+      const userData = userRes.data;
 
       // 3. Lưu vào localStorage
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      localStorage.setItem('user_data', JSON.stringify({ email: userEmail, role }));
+      localStorage.setItem('user_data', JSON.stringify(userData));
 
-      setUser({ email: userEmail, role });
+      setUser(userData);
 
-      return { success: true, role };
+      return { success: true};
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || 'Login failed' };
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || error.response?.data?.error || 'Login failed' 
+      };
     }
   };
 
@@ -53,13 +58,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const hasRole = (requiredRoles) => {
-    if (!user || !user.role) return false;
-    return requiredRoles.includes(user.role);
-  };
-
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, hasRole }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

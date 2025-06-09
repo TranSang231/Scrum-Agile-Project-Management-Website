@@ -8,7 +8,7 @@ import NavTop from '../../components/layouts/NavTop.jsx';
 import CreateProjectForm from '../../components/project/CreateProjectForm.jsx';
 import ProjectDetail from '../../components/project/DetailProjectForm.jsx';
 
-const API_URL = "http://localhost:8000/api/projects/"; // Đổi lại nếu backend chạy port khác
+const API_URL = "http://localhost:8000/api/projects/"; 
 
 // Tạm thời tạo một đối tượng toast giả
 const toast = {
