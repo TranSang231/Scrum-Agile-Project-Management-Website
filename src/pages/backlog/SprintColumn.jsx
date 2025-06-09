@@ -1,10 +1,70 @@
 import '../../assets/styles/pages/backlog/sprintColumn.scss';
-import React from "react";
+import React, { useState } from "react";
+import CreateSprintForm from "../../components/backlog/createSprintForm.jsx";
+import EditSprintForm from "../../components/backlog/editSprintForm.jsx";
+import DropdownMenu from "../../components/DropDownMenu";
 
 const SprintColumn = ({ activeSprint }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const [currentSprint, setCurrentSprint] = useState({
+    name: "Sprint 1",
+    boardId: 123,
+    startDate: "2025-05-15",
+    endDate: "2025-05-29",
+    goal: "Complete the main dashboard features"
+  });
+
+  // Function to open create sprint modal 
+  const handleOpenCreateModal = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  // Function to close create sprint modal
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
+
+  // Function to open edit sprint modal
+  const handleEditSprint = () => {
+    setIsEditModalOpen(true);
+  };
+  
+  // Function to close edit sprint modal
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  // Function to handle form submission
+  const handleCreateSprint = (sprintData) => {
+    console.log('New sprint data:', sprintData);
+    // Process the sprint creation logic here
+    
+    setIsCreateModalOpen(false);
+  };
+
+  const handleSaveSprint = (sprintData) => {
+    console.log('Updated sprint data:', sprintData);
+    // Update the current sprint with the new data
+    setCurrentSprint(sprintData);
+    setIsEditModalOpen(false);
+  };
+  
+  const handleDeleteSprint = () => {
+    // Xử lý logic xóa sprint
+    console.log("Delete sprint");
+    // Có thể hiển thị confirm dialog trước khi xóa
+  };
+
   return (
     <div className="sprint__column">
-      <button className="sprint__button sprint__button--create">Create Sprint</button>
+      <button 
+        className="sprint__button sprint__button--create" 
+        onClick={handleOpenCreateModal}
+      >
+        Create Sprint
+      </button>
 
       <div className="sprint__container">
         <div className="sprint__header">
@@ -18,11 +78,10 @@ const SprintColumn = ({ activeSprint }) => {
 
           <div className="sprint__actions">
             <button className="button">Run Sprint</button>
-            <button className="button--icon">
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 212 0z" />
-              </svg>
-            </button>
+            <DropdownMenu
+              onEdit={handleEditSprint}
+              onDelete={handleDeleteSprint}
+            />
           </div>
         </div>
 
@@ -90,6 +149,20 @@ const SprintColumn = ({ activeSprint }) => {
           </ul>
         </div>
       </div>
+
+      <CreateSprintForm 
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        onSubmit={handleCreateSprint}
+      />
+
+      <EditSprintForm 
+        isOpen={isEditModalOpen}
+        currentSprint={currentSprint}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveSprint}
+      />
+
     </div>
   );
 };
