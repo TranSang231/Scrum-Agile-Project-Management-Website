@@ -20,7 +20,8 @@ export const PasswordForm = ({
   passwordConditions,
   isPasswordValid,
   message,
-  messageType
+  messageType,
+  setStep
 }) => (
   <form onSubmit={handlePasswordSubmit}>
     <FormHeader title="Create password" subtitle="Choose a strong password for your account" />

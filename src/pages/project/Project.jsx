@@ -6,7 +6,7 @@ import NavLeft from '../../components/layouts/NavLeft.jsx';
 import NavTop from '../../components/layouts/NavTop.jsx';
 import CreateProjectForm from '../../components/project/CreateProjectForm.jsx';
 
-const API_URL = "http://localhost:8000/api/projects/"; // Đổi lại nếu backend chạy port khác
+const API_URL = "http://localhost:8000/api/projects/"; 
 
 const Project = () => {
     const navigate = useNavigate();
