@@ -7,7 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const KanbanColumn = ({ 
   columns, 
   setColumns, 
-  onAddTask 
+  onAddTask,
+  projectId 
 }) => {
 
   // State để quản lý tiêu đề cột mới và trạng thái hiển thị form thêm cột

@@ -13,8 +13,8 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
   // Form state initialized with current sprint data or defaults
   const [formData, setFormData] = useState({
     name: '',
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
     goal: ''
   });
   
@@ -34,8 +34,8 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
     if (isOpen && currentSprint) {
       setFormData({
         name: currentSprint.name || '',
-        startDate: currentSprint.startDate || '',
-        endDate: currentSprint.endDate || '',
+        start_date: currentSprint.start_date || '',
+        end_date: currentSprint.end_date || '',
         goal: currentSprint.goal || ''
       });
     }
@@ -103,14 +103,14 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
     }
 
     // Date validations
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required';
+    if (!formData.start_date) {
+      newErrors.start_date = 'Start date is required';
     }
 
-    if (!formData.endDate) {
-      newErrors.endDate = 'End date is required';
-    } else if (formData.startDate && new Date(formData.endDate) < new Date(formData.startDate)) {
-      newErrors.endDate = 'End date must be after start date';
+    if (!formData.end_date) {
+      newErrors.end_date = 'End date is required';
+    } else if (formData.start_date && new Date(formData.end_date) < new Date(formData.start_date)) {
+      newErrors.end_date = 'End date must be after start date';
     }
 
     // Goal validation (optional but with character limit)
@@ -167,7 +167,7 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
         {/* Modal Body */}
         <div className="edit-sprint-modal__body">
           <p id="edit-sprint-desc" className="edit-sprint-modal__description">
-            Cập nhật thông tin sprint hiện tại
+            Update sprint information
           </p>
           
           <form className="edit-sprint-form" onSubmit={handleSubmit}>
@@ -195,37 +195,37 @@ const EditSprintForm = ({ isOpen, currentSprint, onClose, onSave }) => {
             <div className="edit-sprint-form__date-container">
               {/* Start Date Field */}
               <div className="edit-sprint-form__field edit-sprint-form__field--half">
-                <label htmlFor="startDate" className="edit-sprint-form__label">
+                <label htmlFor="start_date" className="edit-sprint-form__label">
                   Start Date <span className="edit-sprint-form__required">*</span>
                 </label>
                 <input
                   type="date"
-                  id="startDate"
-                  name="startDate"
-                  className={`edit-sprint-form__input ${errors.startDate ? 'edit-sprint-form__input--error' : ''}`}
-                  value={formData.startDate}
+                  id="start_date"
+                  name="start_date"
+                  className={`edit-sprint-form__input ${errors.start_date ? 'edit-sprint-form__input--error' : ''}`}
+                  value={formData.start_date}
                   onChange={handleChange}
                 />
-                {errors.startDate && (
-                  <div className="edit-sprint-form__error">{errors.startDate}</div>
+                {errors.start_date && (
+                  <div className="edit-sprint-form__error">{errors.start_date}</div>
                 )}
               </div>
 
               {/* End Date Field */}
               <div className="edit-sprint-form__field edit-sprint-form__field--half">
-                <label htmlFor="endDate" className="edit-sprint-form__label">
+                <label htmlFor="end_date" className="edit-sprint-form__label">
                   End Date <span className="edit-sprint-form__required">*</span>
                 </label>
                 <input
                   type="date"
-                  id="endDate"
-                  name="endDate"
-                  className={`edit-sprint-form__input ${errors.endDate ? 'edit-sprint-form__input--error' : ''}`}
-                  value={formData.endDate}
+                  id="end_date"
+                  name="end_date"
+                  className={`edit-sprint-form__input ${errors.end_date ? 'edit-sprint-form__input--error' : ''}`}
+                  value={formData.end_date}
                   onChange={handleChange}
                 />
-                {errors.endDate && (
-                  <div className="edit-sprint-form__error">{errors.endDate}</div>
+                {errors.end_date && (
+                  <div className="edit-sprint-form__error">{errors.end_date}</div>
                 )}
               </div>
             </div>

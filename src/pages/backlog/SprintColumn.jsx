@@ -1,61 +1,178 @@
 import '../../assets/styles/pages/backlog/sprintColumn.scss';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CreateSprintForm from "../../components/backlog/createSprintForm.jsx";
 import EditSprintForm from "../../components/backlog/editSprintForm.jsx";
-import DropdownMenu from "../../components/DropDownMenu";
+import SprintCard from "../../components/backlog/SprintCard";
+import axios from 'axios';
 
-const SprintColumn = ({ activeSprint }) => {
+const SprintColumn = ({ projectId }) => {
+  const API_URL = 'http://localhost:8000/api';
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [sprints, setSprints] = useState([]);
+  const [currentSprint, setCurrentSprint] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [currentSprint, setCurrentSprint] = useState({
-    name: "Sprint 1",
-    boardId: 123,
-    startDate: "2025-05-15",
-    endDate: "2025-05-29",
-    goal: "Complete the main dashboard features"
-  });
+  const getAuthHeader = () => {
+    const token = localStorage.getItem('access_token');
+    return {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+  };
 
-  // Function to open create sprint modal 
+  const refreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (!refreshToken) {
+        throw new Error('No refresh token');
+      }
+
+      const response = await axios.post(`${API_URL}/token/refresh/`, {
+        refresh: refreshToken
+      });
+
+      localStorage.setItem('access_token', response.data.access);
+      return response.data.access;
+    } catch (error) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      window.location.href = '/login';
+      throw error;
+    }
+  };
+
+  const fetchSprints = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/sprints/?project=${projectId}`, {
+        headers: getAuthHeader()
+      });
+      setSprints(response.data);
+      setLoading(false);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        try {
+          await refreshToken();
+          return fetchSprints();
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          window.location.href = '/login';
+        }
+      }
+      setError('Failed to fetch sprints');
+      setLoading(false);
+      console.error('Error fetching sprints:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (projectId) {
+      fetchSprints();
+    }
+  }, [projectId]);
+
   const handleOpenCreateModal = () => {
     setIsCreateModalOpen(true);
   };
 
-  // Function to close create sprint modal
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
   };
 
-  // Function to open edit sprint modal
-  const handleEditSprint = () => {
+  const handleEditSprint = (sprint) => {
+    setCurrentSprint(sprint);
     setIsEditModalOpen(true);
   };
   
-  // Function to close edit sprint modal
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
+    setCurrentSprint(null);
   };
 
-  // Function to handle form submission
-  const handleCreateSprint = (sprintData) => {
-    console.log('New sprint data:', sprintData);
-    // Process the sprint creation logic here
-    
-    setIsCreateModalOpen(false);
+  const handleCreateSprint = async (sprintData) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/sprints/`,
+        {
+          ...sprintData,
+          project: projectId
+        },
+        { headers: getAuthHeader() }
+      );
+      setSprints([...sprints, response.data]);
+      setIsCreateModalOpen(false);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        try {
+          await refreshToken();
+          return handleCreateSprint(sprintData);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          window.location.href = '/login';
+        }
+      }
+      console.error('Error creating sprint:', err);
+      setError('Failed to create sprint');
+    }
   };
 
-  const handleSaveSprint = (sprintData) => {
-    console.log('Updated sprint data:', sprintData);
-    // Update the current sprint with the new data
-    setCurrentSprint(sprintData);
-    setIsEditModalOpen(false);
+  const handleSaveSprint = async (sprintData) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/sprints/${currentSprint.id}/`,
+        {
+          ...sprintData,
+          project: projectId
+        },
+        { headers: getAuthHeader() }
+      );
+      setSprints(sprints.map(sprint => 
+        sprint.id === currentSprint.id ? response.data : sprint
+      ));
+      setIsEditModalOpen(false);
+      setCurrentSprint(null);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        try {
+          await refreshToken();
+          return handleSaveSprint(sprintData);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          window.location.href = '/login';
+        }
+      }
+      console.error('Error updating sprint:', err);
+      setError('Failed to update sprint');
+    }
   };
   
-  const handleDeleteSprint = () => {
-    // Xử lý logic xóa sprint
-    console.log("Delete sprint");
-    // Có thể hiển thị confirm dialog trước khi xóa
+  const handleDeleteSprint = async (sprintId) => {
+    if (window.confirm('Are you sure you want to delete this sprint?')) {
+      try {
+        await axios.delete(
+          `${API_URL}/sprints/${sprintId}/`,
+          { headers: getAuthHeader() }
+        );
+        setSprints(sprints.filter(sprint => sprint.id !== sprintId));
+      } catch (err) {
+        if (err.response?.status === 401) {
+          try {
+            await refreshToken();
+            return handleDeleteSprint(sprintId);
+          } catch (refreshError) {
+            console.error('Token refresh failed:', refreshError);
+            window.location.href = '/login';
+          }
+        }
+        console.error('Error deleting sprint:', err);
+        setError('Failed to delete sprint');
+      }
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="sprint__column">
@@ -67,87 +184,14 @@ const SprintColumn = ({ activeSprint }) => {
       </button>
 
       <div className="sprint__container">
-        <div className="sprint__header">
-          <div className="sprint__title">
-            <input id="sprint-toggle" type="checkbox" />
-            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-            </svg>
-            <span>{activeSprint}</span>
-          </div>
-
-          <div className="sprint__actions">
-            <button className="button">Run Sprint</button>
-            <DropdownMenu
-              onEdit={handleEditSprint}
-              onDelete={handleDeleteSprint}
-            />
-          </div>
-        </div>
-
-        <div className="sprint__card">
-          <div className="sprint__task-header">
-            <div className="sprint__task-info">
-              <input type="checkbox" />
-              <h3>Hero section</h3>
-              <span className="sprint__badge sprint__badge--in-progress">In progress</span>
-            </div>
-            <div className="sprint__task-actions">
-              <div className="avatar">AS</div>
-              <button className="button--icon">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 212 0zm7 0a1 1 0 11-2 0 1 1 0 212 0zm7 0a1 1 0 11-2 0 1 1 0 212 0z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <ul className="sprint__subtask-list">
-            <li className="sprint__subtask-item">
-              <div className="sprint__subtask-info">
-                <input type="checkbox" />
-                <div>
-                  <p className="sprint__subtask-title">Typography change</p>
-                  <p className="sprint__subtask-status">To do</p>
-                </div>
-              </div>
-              <div className="sprint__subtask-assignees">
-                <div className="avatar violet">VH</div>
-                <div className="avatar orange">AS</div>
-              </div>
-            </li>
-
-            <li className="sprint__subtask-item">
-              <div className="sprint__subtask-info">
-                <input type="checkbox" />
-                <div>
-                  <p className="sprint__subtask-title">Implement design screens</p>
-                  <p className="sprint__subtask-status">
-                    <span className="sprint__badge sprint__badge--done">Done</span>
-                  </p>
-                </div>
-              </div>
-              <div className="sprint__subtask-assignees">
-                <div className="avatar orange">AS</div>
-              </div>
-            </li>
-
-            <li className="sprint__subtask-item">
-              <div className="sprint__subtask-info">
-                <input type="checkbox" />
-                <div>
-                  <p className="sprint__subtask-title">Proofread final text</p>
-                  <p className="sprint__subtask-status">
-                    <span className="sprint__badge sprint__badge--done">Done</span>
-                  </p>
-                </div>
-              </div>
-              <div className="sprint__subtask-assignees">
-                <div className="avatar orange">AS</div>
-              </div>
-            </li>
-          </ul>
-        </div>
+        {sprints.map(sprint => (
+          <SprintCard
+            key={sprint.id}
+            sprint={sprint}
+            onEdit={handleEditSprint}
+            onDelete={handleDeleteSprint}
+          />
+        ))}
       </div>
 
       <CreateSprintForm 
@@ -162,7 +206,6 @@ const SprintColumn = ({ activeSprint }) => {
         onClose={handleCloseEditModal}
         onSave={handleSaveSprint}
       />
-
     </div>
   );
 };

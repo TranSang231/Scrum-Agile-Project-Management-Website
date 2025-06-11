@@ -1,69 +1,282 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import '../../assets/styles/pages/backlog/backlogColumn.scss';
-import TaskCard from "../../components/TaskCard.jsx";
-import EditTaskForm from "../../components/backlog/EditTaskForm.jsx";
-import EditEpicForm from "../../components/backlog/EditEpicForm.jsx";
-import EditUserStoryForm from "../../components/backlog/EditUserStoryForm.jsx";
+import EpicCard from "../../components/backlog/EpicCard";
+import UserStoryCard from "../../components/backlog/UserStoryCard";
+import EditEpicForm from "../../components/backlog/EditEpicForm";
+import EditUserStoryForm from "../../components/backlog/EditUserStoryForm";
+import axios from 'axios';
 
-// Dữ liệu mẫu
-const sampleProjects = [
-    { id: 'proj1', name: 'Website Redesign' },
-    { id: 'proj2', name: 'Mobile App Development' },
-    { id: 'proj3', name: 'CRM Integration' },
-];
+const BacklogColumn = ({ projectId }) => {
+    const API_URL = 'http://localhost:8000/api';
+    const navigate = useNavigate();
 
-const sampleUsers = [
-    { id: 'user1', name: 'John Doe', username: 'johndoe' },
-    { id: 'user2', name: 'Jane Smith', username: 'janesmith' },
-    { id: 'user3', name: 'Mike Johnson', username: 'mikejohnson' },
-];
-
-const BacklogColumn = () => {
     const [isCreatingEpic, setCreatingEpic] = useState(false);
     const [isCreatingUserStory, setCreatingUserStory] = useState(false);
-    const [selectedColumnId, setSelectedColumnId] = useState(null);
+    const [epics, setEpics] = useState([]);
+    const [userStories, setUserStories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const currentUser = sampleUsers[0]; // Giả định người dùng đầu tiên là người dùng hiện tại
+    const getAuthHeader = () => {
+        const token = localStorage.getItem('access_token');
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    };
 
-    const handleCreateEpic = (columnId) => {
-        setSelectedColumnId(columnId);
-        setCreatingEpic(true);
-    }
+    const refreshToken = async () => {
+        try {
+            const refreshToken = localStorage.getItem('refresh_token');
+            if (!refreshToken) {
+                throw new Error('No refresh token');
+            }
 
-    const handleCreateUserStory = (columnId) => {
-        setSelectedColumnId(columnId);
-        setCreatingUserStory(true);
-    }
+            const response = await axios.post(`${API_URL}/token/refresh/`, {
+                refresh: refreshToken
+            });
 
-    const [columns, setColumns] = useState([
-        {
-            id: 'backlog',
-            title: 'Backlog',
-            tasks: [
-                {
-                    id: 'task1',
-                    title: 'Hero section',
-                    type: 'design-system',
-                    typeLabel: 'DESIGN SYSTEM',
-                    description: 'Create a design system for a hero section in 2 different variants. Create a simple presentation with these components.',
-                    assignees: [
-                        { id: 'user1', initials: 'VH', color: '#3b82f6' },
-                        { id: 'user2', initials: 'JD', color: '#f97316' },
-                    ]
-                },
-                {
-                    id: 'task2',
-                    title: 'Typography change',
-                    type: 'typography',
-                    typeLabel: 'TYPOGRAPHY',
-                    description: 'Modify typography and styling of text placed on 6 screens of the website design. Prepare a documentation.',
-                    assignees: [
-                        { id: 'user3', initials: 'ML', color: '#ec4899' },
-                    ]
-                }
-            ]
+            localStorage.setItem('access_token', response.data.access);
+            return response.data.access;
+        } catch (error) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            navigate('/login');
+            throw error;
         }
-    ]);
+    };
+
+    const fetchEpics = async () => {
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const response = await axios.get(`${API_URL}/epics/?project=${projectId}`, {
+                headers: getAuthHeader()
+            });
+
+            console.log('Fetched epics for project:', projectId, response.data);
+            setEpics(response.data);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                try {
+                    await refreshToken();
+                    return fetchEpics();
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    navigate('/login');
+                }
+            }
+            setError('Failed to fetch epics');
+            console.error('Error fetching epics:', err);
+        }
+    };
+
+    const fetchUserStories = async () => {
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const response = await axios.get(`${API_URL}/user-stories/?project=${projectId}`, {
+                headers: getAuthHeader()
+            });
+
+            console.log('Fetched user stories for project:', projectId, response.data);
+            setUserStories(response.data);
+            setLoading(false);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                try {
+                    await refreshToken();
+                    return fetchUserStories();
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    navigate('/login');
+                }
+            }
+            setError('Failed to fetch user stories');
+            setLoading(false);
+            console.error('Error fetching user stories:', err);
+        }
+    };
+
+    useEffect(() => {
+        if (projectId) {
+            console.log('Fetching data for project:', projectId);
+            fetchEpics();
+            fetchUserStories();
+        }
+    }, [projectId]);
+
+    const handleCreateEpic = () => {
+        setCreatingEpic(true);
+    };
+
+    const handleCreateUserStory = () => {
+        setCreatingUserStory(true);
+    };
+
+    const handleSaveEpic = async (epicData) => {
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const epicPayload = {
+                ...epicData,
+                project: projectId
+            };
+
+            if (epicData.id) {
+                // Update existing epic
+                const response = await axios.put(
+                    `${API_URL}/epics/${epicData.id}/`,
+                    epicPayload,
+                    { headers: getAuthHeader() }
+                );
+                setEpics(epics.map(epic => 
+                    epic.id === epicData.id ? response.data : epic
+                ));
+            } else {
+                // Create new epic
+                const response = await axios.post(
+                    `${API_URL}/epics/`,
+                    epicPayload,
+                    { headers: getAuthHeader() }
+                );
+                setEpics([...epics, response.data]);
+            }
+            setCreatingEpic(false);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                try {
+                    await refreshToken();
+                    return handleSaveEpic(epicData);
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    navigate('/login');
+                }
+            }
+            console.error('Error saving epic:', err);
+            setError('Failed to save epic');
+        }
+    };
+
+    const handleSaveUserStory = async (userStoryData) => {
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const userStoryPayload = {
+                ...userStoryData,
+                project: projectId
+            };
+
+            if (userStoryData.id) {
+                // Update existing user story
+                const response = await axios.put(
+                    `${API_URL}/user-stories/${userStoryData.id}/`,
+                    userStoryPayload,
+                    { headers: getAuthHeader() }
+                );
+                setUserStories(userStories.map(story => 
+                    story.id === userStoryData.id ? response.data : story
+                ));
+            } else {
+                // Create new user story
+                const response = await axios.post(
+                    `${API_URL}/user-stories/`,
+                    userStoryPayload,
+                    { headers: getAuthHeader() }
+                );
+                setUserStories([...userStories, response.data]);
+            }
+            setCreatingUserStory(false);
+        } catch (err) {
+            if (err.response?.status === 401) {
+                try {
+                    await refreshToken();
+                    return handleSaveUserStory(userStoryData);
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    navigate('/login');
+                }
+            }
+            console.error('Error saving user story:', err);
+            setError('Failed to save user story');
+        }
+    };
+
+    const handleDeleteEpic = async (epicId) => {
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            await axios.delete(
+                `${API_URL}/epics/${epicId}/`,
+                { headers: getAuthHeader() }
+            );
+            setEpics(epics.filter(epic => epic.id !== epicId));
+        } catch (err) {
+            if (err.response?.status === 401) {
+                try {
+                    await refreshToken();
+                    return handleDeleteEpic(epicId);
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    navigate('/login');
+                }
+            }
+            console.error('Error deleting epic:', err);
+            setError('Failed to delete epic');
+        }
+    };
+
+    const handleDeleteUserStory = async (userStoryId) => {
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            await axios.delete(
+                `${API_URL}/user-stories/${userStoryId}/`,
+                { headers: getAuthHeader() }
+            );
+            setUserStories(userStories.filter(story => story.id !== userStoryId));
+        } catch (err) {
+            if (err.response?.status === 401) {
+                try {
+                    await refreshToken();
+                    return handleDeleteUserStory(userStoryId);
+                } catch (refreshError) {
+                    console.error('Token refresh failed:', refreshError);
+                    navigate('/login');
+                }
+            }
+            console.error('Error deleting user story:', err);
+            setError('Failed to delete user story');
+        }
+    };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="backlog__column">
@@ -84,89 +297,71 @@ const BacklogColumn = () => {
                     </div>
                 </div>
 
-                <div className="backlog__task-list">
-                    {columns[0].tasks.map((task) => (
-                        <TaskCard
-                            key={task.id}
-                            task={task}
-                            onEditSave={(updatedTask) => {
-                                setColumns(columns.map(col =>
-                                    col.id === columns[0].id
-                                        ? { ...col, tasks: col.tasks.map(t => t.id === task.id ? updatedTask : t) }
-                                        : col
-                                ));
-                            }}
-                            onDelete={(taskId) => {
-                                setColumns(columns.map(col =>
-                                    col.id === columns[0].id
-                                        ? { ...col, tasks: col.tasks.filter(t => t.id !== taskId) }
-                                        : col
-                                ));
-                            }}
-                        />
-                    ))}
+                {isCreatingEpic && (
+                    <EditEpicForm
+                        isCreating={true}
+                        onSave={handleSaveEpic}
+                        onCancel={() => setCreatingEpic(false)}
+                        projectId={projectId}
+                    />
+                )}
+
+                {isCreatingUserStory && (
+                    <EditUserStoryForm
+                        isCreating={true}
+                        onSave={handleSaveUserStory}
+                        onCancel={() => setCreatingUserStory(false)}
+                        projectId={projectId}
+                    />
+                )}
+
+                <div className="backlog__epic-list">
+                    {epics && epics.length > 0 ? (
+                        epics.map((epic) => (
+                            <EpicCard
+                                key={epic.id}
+                                epic={epic}
+                                onEditSave={handleSaveEpic}
+                                onDelete={handleDeleteEpic}
+                                onSaveUserStory={handleSaveUserStory}
+                                onDeleteUserStory={handleDeleteUserStory}
+                            />
+                        ))
+                    ) : (
+                        <div className="no-epics">No epics found</div>
+                    )}
+                </div>
+
+                <div className="backlog__user-story-list">
+                    {userStories && userStories.length > 0 ? (
+                        userStories.map((userStory) => (
+                            <UserStoryCard
+                                key={userStory.id}
+                                userStory={userStory}
+                                onEditSave={handleSaveUserStory}
+                                onDelete={handleDeleteUserStory}
+                            />
+                        ))
+                    ) : (
+                        <div className="no-user-stories">No user stories found</div>
+                    )}
                 </div>
             </div>
 
             <div className="backlog__column-buttons">
                 <button
                     className="backlog__column-button backlog__column-button--create backlog__column-button--epic"
-                    onClick={() => handleCreateEpic(columns[0].id)}
+                    onClick={handleCreateEpic}
                 >
                     Create Epic
                 </button>
                 <button
-                    className="backlog__column-button backlog__column-button--create backlog__column-button--story"
-                    onClick={() => handleCreateUserStory(columns[0].id)}
+                    className="backlog__column-button backlog__column-button--create backlog__column-button--user-story"
+                    onClick={handleCreateUserStory}
                 >
                     Create User Story
                 </button>
             </div>
-
-            {isCreatingEpic && (
-                <EditEpicForm
-                    isCreating={true}
-                    projects={sampleProjects}
-                    users={sampleUsers}
-                    currentUser={currentUser}
-                    onSave={(newEpic) => {
-                        setColumns(columns.map(col =>
-                            col.id === selectedColumnId
-                                ? { ...col, tasks: [...col.tasks, newEpic] }
-                                : col
-                        ));
-                        setCreatingEpic(false);
-                    }}
-                    onCancel={() => setCreatingEpic(false)}
-                />
-            )}
-
-            {isCreatingUserStory && (
-                <EditUserStoryForm
-                    isCreating={true}
-                    projects={sampleProjects}
-                    users={sampleUsers}
-                    priorities={[
-                        { value: 'low', label: 'Low' },
-                        { value: 'medium', label: 'Medium' },
-                        { value: 'high', label: 'High' }
-                    ]}
-                    onSave={(newTask) => {
-                        const userStory = {
-                            ...newTask,
-                            type: 'user-story',
-                            typeLabel: 'USER STORY'
-                        };
-                        setColumns(columns.map(col =>
-                            col.id === selectedColumnId
-                                ? { ...col, tasks: [...col.tasks, userStory] }
-                                : col
-                        ));
-                        setCreatingUserStory(false);
-                    }}
-                    onCancel={() => setCreatingUserStory(false)}
-                />
-            )}
         </div>
     );
 };

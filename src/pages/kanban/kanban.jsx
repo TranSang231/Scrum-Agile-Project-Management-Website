@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import "../../assets/styles/pages/kanban/kanban.scss";
+import { useParams } from 'react-router-dom';
+import { useProject } from '../../contexts/ProjectContext';
 
 import NavLeft from '../../components/layouts/NavLeft.jsx';
 import NavTop from '../../components/layouts/NavTop.jsx';
@@ -7,6 +9,9 @@ import EditTaskForm from '../../components/backlog/EditTaskForm.jsx';
 import KanbanColumn from './KanbanColumn.jsx';
 
 const Kanban = () => {
+  const { projectId } = useParams();
+  const { currentProject } = useProject();
+
   const [activeView, setActiveView] = useState('kanban');
   const [timeFilter, setTimeFilter] = useState('This week');
   const [selectedColumnId, setSelectedColumnId] = useState(null);
@@ -147,6 +152,7 @@ const Kanban = () => {
             columns={columns}
             setColumns={setColumns}
             onAddTask={handleAddTask}
+            projectId={projectId}
           />
 
           {/* Hiển thị form thêm task */}

@@ -1,15 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "../../assets/styles/layouts/navLeft.scss"; 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const NavLeft = ({ activeView, setActiveView }) => {
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentProject, setCurrentProject] = useState(null);
+
+  useEffect(() => {
+    // Lấy thông tin project hiện tại từ localStorage
+    const storedProject = localStorage.getItem('currentProject');
+    if (storedProject) {
+      setCurrentProject(JSON.parse(storedProject));
+    }
+  }, [location.pathname]); // Cập nhật khi đường dẫn thay đổi
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
     { id: 'project', label: 'Project', icon: 'project', path: '/project' },
-    { id: 'backlog', label: 'Backlog', icon: 'calendar', path: '/backlog' },
-    { id: 'kanban', label: 'Kanban', icon: 'layers', path: '/kanban' },
+    { 
+      id: 'backlog', 
+      label: 'Backlog', 
+      icon: 'calendar', 
+      path: currentProject ? `/backlog/${currentProject.id}` : '/backlog',
+      disabled: !currentProject
+    },
+    { 
+      id: 'kanban', 
+      label: 'Kanban', 
+      icon: 'layers', 
+      path: currentProject ? `/kanban/${currentProject.id}` : '/kanban',
+      disabled: !currentProject
+    },
     { id: 'settings', label: 'Settings', icon: 'settings', path: '/settings' },
   ];
 
@@ -71,14 +93,20 @@ const NavLeft = ({ activeView, setActiveView }) => {
   };
 
   const handleNavigation = (item) => () => {
+    if (item.disabled) {
+      // Nếu chưa chọn project, chuyển đến trang project để chọn
+      navigate('/project');
+      return;
+    }
     setActiveView(item.id);
     navigate(item.path);
   }
 
   const handleLogout = () => {
     // Xóa token và thông tin đăng nhập
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('currentProject');
     
     // Chuyển hướng về trang đăng nhập
     navigate('/login');
@@ -90,8 +118,9 @@ const NavLeft = ({ activeView, setActiveView }) => {
         {menuItems.map(item => (
           <div
             key={item.id}
-            className={`nav-item ${activeView === item.id ? 'active' : ''}`}
+            className={`nav-item ${activeView === item.id ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
             onClick={handleNavigation(item)}
+            title={item.disabled ? 'Please select a project first' : ''}
           >
             <div className="nav-icon">
               {renderIcon(item.icon)}

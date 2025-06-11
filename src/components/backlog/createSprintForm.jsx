@@ -4,10 +4,10 @@ import '../../assets/styles/components/backlog/createSprintForm.scss';
 const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
   // Form state
   const [formData, setFormData] = useState({
-    sprintName: '',
-    startDate: '',
-    endDate: '',
-    sprintGoal: ''
+    name: '',
+    start_date: '',
+    end_date: '',
+    goal: ''
   });
 
   // Validation state
@@ -17,6 +17,19 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
   // Refs
   const modalRef = useRef(null);
   const firstInputRef = useRef(null);
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        name: '',
+        start_date: '',
+        end_date: '',
+        goal: ''
+      });
+      setErrors({});
+    }
+  }, [isOpen]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -56,25 +69,25 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
     const newErrors = {};
     
     // Sprint Name validation
-    if (!formData.sprintName.trim()) {
-      newErrors.sprintName = 'Sprint name is required';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Sprint name is required';
     }
 
     // Start Date
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required';
+    if (!formData.start_date) {
+      newErrors.start_date = 'Start date is required';
     }
 
     // End Date validation
-    if (!formData.endDate) {
-      newErrors.endDate = 'End date is required';
-    } else if (formData.startDate && new Date(formData.endDate) < new Date(formData.startDate)) {
-      newErrors.endDate = 'End date must be after start date';
+    if (!formData.end_date) {
+      newErrors.end_date = 'End date is required';
+    } else if (formData.start_date && new Date(formData.end_date) < new Date(formData.start_date)) {
+      newErrors.end_date = 'End date must be after start date';
     }
 
     // Sprint Goal validation
-    if (formData.sprintGoal.length > 255) {
-      newErrors.sprintGoal = 'Sprint goal must be less than 255 characters';
+    if (formData.goal && formData.goal.length > 255) {
+      newErrors.goal = 'Sprint goal must be less than 255 characters';
     }
 
     setErrors(newErrors);
@@ -125,21 +138,21 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
           <form className="create-sprint-form" onSubmit={handleSubmit}>
             {/* Sprint Name Field */}
             <div className="create-sprint-form__field">
-              <label htmlFor="sprintName" className="create-sprint-form__label">
+              <label htmlFor="name" className="create-sprint-form__label">
                 Sprint Name <span className="create-sprint-form__required">*</span>
               </label>
               <input
                 type="text"
-                id="sprintName"
-                name="sprintName"
+                id="name"
+                name="name"
                 ref={firstInputRef}
-                className={`create-sprint-form__input ${errors.sprintName ? 'create-sprint-form__input--error' : ''}`}
+                className={`create-sprint-form__input ${errors.name ? 'create-sprint-form__input--error' : ''}`}
                 placeholder="Enter sprint name"
-                value={formData.sprintName}
+                value={formData.name}
                 onChange={handleChange}
               />
-              {errors.sprintName && (
-                <div className="create-sprint-form__error">{errors.sprintName}</div>
+              {errors.name && (
+                <div className="create-sprint-form__error">{errors.name}</div>
               )}
             </div>
 
@@ -147,59 +160,59 @@ const CreateSprintForm = ({ isOpen, onClose, onSubmit }) => {
             <div className="create-sprint-form__date-container">
               {/* Start Date Field */}
               <div className="create-sprint-form__field create-sprint-form__field--half">
-                <label htmlFor="startDate" className="create-sprint-form__label">
+                <label htmlFor="start_date" className="create-sprint-form__label">
                   Start Date <span className="create-sprint-form__required">*</span>
                 </label>
                 <input
                   type="date"
-                  id="startDate"
-                  name="startDate"
-                  className={`create-sprint-form__input ${errors.startDate ? 'create-sprint-form__input--error' : ''}`}
-                  value={formData.startDate}
+                  id="start_date"
+                  name="start_date"
+                  className={`create-sprint-form__input ${errors.start_date ? 'create-sprint-form__input--error' : ''}`}
+                  value={formData.start_date}
                   onChange={handleChange}
                 />
-                {errors.startDate && (
-                  <div className="create-sprint-form__error">{errors.startDate}</div>
+                {errors.start_date && (
+                  <div className="create-sprint-form__error">{errors.start_date}</div>
                 )}
               </div>
 
               {/* End Date Field */}
               <div className="create-sprint-form__field create-sprint-form__field--half">
-                <label htmlFor="endDate" className="create-sprint-form__label">
+                <label htmlFor="end_date" className="create-sprint-form__label">
                   End Date <span className="create-sprint-form__required">*</span>
                 </label>
                 <input
                   type="date"
-                  id="endDate"
-                  name="endDate"
-                  className={`create-sprint-form__input ${errors.endDate ? 'create-sprint-form__input--error' : ''}`}
-                  value={formData.endDate}
+                  id="end_date"
+                  name="end_date"
+                  className={`create-sprint-form__input ${errors.end_date ? 'create-sprint-form__input--error' : ''}`}
+                  value={formData.end_date}
                   onChange={handleChange}
                 />
-                {errors.endDate && (
-                  <div className="create-sprint-form__error">{errors.endDate}</div>
+                {errors.end_date && (
+                  <div className="create-sprint-form__error">{errors.end_date}</div>
                 )}
               </div>
             </div>
 
             {/* Sprint Goal Field */}
             <div className="create-sprint-form__field">
-              <label htmlFor="sprintGoal" className="create-sprint-form__label">Sprint Goal</label>
+              <label htmlFor="goal" className="create-sprint-form__label">Sprint Goal</label>
               <textarea
-                id="sprintGoal"
-                name="sprintGoal"
-                className={`create-sprint-form__textarea ${errors.sprintGoal ? 'create-sprint-form__textarea--error' : ''}`}
+                id="goal"
+                name="goal"
+                className={`create-sprint-form__textarea ${errors.goal ? 'create-sprint-form__textarea--error' : ''}`}
                 placeholder="Enter sprint goal (max 255 characters)"
-                value={formData.sprintGoal}
+                value={formData.goal}
                 onChange={handleChange}
                 maxLength={255}
                 rows={4}
               ></textarea>
               <div className="create-sprint-form__char-count">
-                {formData.sprintGoal.length}/255
+                {formData.goal.length}/255
               </div>
-              {errors.sprintGoal && (
-                <div className="create-sprint-form__error">{errors.sprintGoal}</div>
+              {errors.goal && (
+                <div className="create-sprint-form__error">{errors.goal}</div>
               )}
             </div>
           </form>

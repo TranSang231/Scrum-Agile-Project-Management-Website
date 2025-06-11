@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext';
+import { ProjectProvider } from '../contexts/ProjectContext.jsx'
 import ProtectedRoute from '../components/ProtectedRoute';
 
 // Auth Pages
@@ -24,6 +25,7 @@ function AppRouter() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
+        <ProjectProvider>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
@@ -31,7 +33,7 @@ function AppRouter() {
           <Route path="/register" element={<Registration />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-
+          <Route path="/landingPage" element={<LandingPage />} />
           {/* Protected Routes */}
           <Route
             path="/admin"
@@ -50,7 +52,7 @@ function AppRouter() {
             }
           />
           <Route
-            path="/kanban"
+            path="/kanban/:projectId"
             element={
               <ProtectedRoute allowedRoles={['Developer', 'Tester', 'Project Manager']}>
                 <Kanban />
@@ -58,7 +60,7 @@ function AppRouter() {
             }
           />
           <Route
-            path="/backlog"
+            path="/backlog/:projectId"
             element={
               <ProtectedRoute allowedRoles={['Developer', 'Tester', 'Project Manager']}>
                 <Backlog />
@@ -83,7 +85,10 @@ function AppRouter() {
             }
           />
 
+
+
         </Routes>
+        </ProjectProvider>
       </AuthProvider>
     </Router>
   );

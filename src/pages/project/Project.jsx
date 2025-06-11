@@ -108,70 +108,16 @@ const Project = () => {
 
     const fetchProjects = async () => {
         try {
-            // const mockdata = [
-            //     {
-            //         budget: 120000,
-            //         client: "sang159875321@gmail.com",
-            //         created_at: "2025-05-12T08:47:12.305393Z",
-            //         created_by: null,
-            //         description: "Website nghe nhạc trực tuyến với các tính năng phát nhạc, tạo playlist và chia sẻ.",
-            //         domain: "ENTERTAINMENT",
-            //         end_date: "2025-05-22",
-            //         goal: "Xây dựng nền tảng nghe nhạc đơn giản, dễ sử dụng và có thể chia sẻ playlist giữa các người dùng.",
-            //         id: 1,
-            //         name: "Website VibeMusic",
-            //         notes: "Ưu tiên phát triển tính năng upload và phát nhạc trước.",
-            //         priority: "medium",
-            //         product_owner_email: "product@example.com",
-            //         product_owner: null,
-            //         project_type: "web",
-            //         scrum_master_email: "scrum@example.com",
-            //         scrum_master: null,
-            //         start_date: "2025-05-10",
-            //         status: "active",
-            //         team_members: [],
-            //         team_members_emails: ["dev1@example.com", "dev2@example.com", "designer@example.com"],
-            //         team_size: 7,
-            //         updated_at: "2025-05-12T08:47:12.305393Z"
-            //     },
-            //     {
-            //         budget: 75000,
-            //         client: "university@edu.com",
-            //         created_at: "2025-05-12T08:47:12.305393Z",
-            //         created_by: null,
-            //         description: "App quản lý lịch học, deadlines và thời khóa biểu cho sinh viên đại học.",
-            //         domain: "education",
-            //         end_date: "2025-06-15",
-            //         goal: "Xây dựng ứng dụng lịch học cho sinh viên với tính năng nhắc nhở deadline và đồng bộ hóa với lịch Google.",
-            //         id: 2,
-            //         name: "Schedule App",
-            //         notes: "Đặc biệt quan tâm đến việc hỗ trợ nhập lịch học tự động qua mã QR hoặc file Excel.",
-            //         priority: "high",
-            //         product_owner_email: "dean@university.edu",
-            //         product_owner: null,
-            //         project_type: "mobile",
-            //         scrum_master_email: "lead@example.com",
-            //         scrum_master: null,
-            //         start_date: "2025-05-15",
-            //         status: "active",
-            //         team_members: [],
-            //         team_members_emails: ["mobile@example.com", "ui@example.com", "backend@example.com", "qa@example.com"],
-            //         team_size: 5,
-            //         updated_at: "2025-05-12T08:47:12.305393Z"
-            //     },
-            // ];
-
-            // // Sử dụng mockdata trong quá trình phát triển
-            // setProjects(mockdata);
-            // setLoading(false);
-
-            // Phần code gọi API thực tế - đang comment để sử dụng mockdata
-
             const token = localStorage.getItem('access_token');
             if (!token) {
                 navigate('/login');
                 return;
             }
+
+            // Get current user ID from token
+            const tokenParts = token.split('.');
+            const payload = JSON.parse(atob(tokenParts[1]));
+            const currentUserId = payload.user_id;
 
             const response = await fetch(API_URL, {
                 headers: {
@@ -209,7 +155,25 @@ const Project = () => {
             }
 
             const data = await response.json();
-            setProjects(data);
+            
+            // Filter projects based on user's role
+            const filteredProjects = data.filter(project => {
+                // User is the creator
+                if (project.created_by === currentUserId) return true;
+                
+                // User is the product owner
+                if (project.product_owner === currentUserId) return true;
+                
+                // User is the scrum master
+                if (project.scrum_master === currentUserId) return true;
+                
+                // User is a team member
+                if (project.team_members && project.team_members.includes(currentUserId)) return true;
+                
+                return false;
+            });
+
+            setProjects(filteredProjects);
             setLoading(false);
 
         } catch (err) {
@@ -238,19 +202,6 @@ const Project = () => {
     // Xử lý tạo dự án mới
     const handleCreateProject = async (projectData) => {
         try {
-            // Trong quá trình phát triển, thêm trực tiếp vào state
-            // const newProject = {
-            //     ...projectData,
-            //     id: Date.now(), // Tạo ID giả
-            //     created_at: new Date().toISOString(),
-            //     updated_at: new Date().toISOString()
-            // };
-            // setProjects(prevProjects => [...prevProjects, newProject]);
-            // setShowCreateForm(false);
-            // toast.success('Project created successfully!');
-
-            // Phần code gọi API thực tế - đang comment để sử dụng mockdata
-
             const token = localStorage.getItem('access_token');
             if (!token) {
                 throw new Error('No authentication token found');
@@ -272,12 +223,13 @@ const Project = () => {
             }
 
             const newProject = await response.json();
+            
+            // Update the projects list with the new project
             setProjects(prevProjects => [...prevProjects, newProject]);
             setShowCreateForm(false);
             toast.success('Project created successfully!');
-
-
             setError(''); // Clear any previous errors
+
         } catch (err) {
             console.error('Error creating project:', err);
             setError(err.message || 'Failed to create project');
@@ -288,21 +240,14 @@ const Project = () => {
     // Xử lý cập nhật dự án
     const handleUpdateProject = async (updatedProject) => {
         try {
-            // Mock update - cập nhật trực tiếp trong state
-            setProjects(prev =>
-                prev.map(project => project.id === updatedProject.id ? updatedProject : project)
-            );
-
-            // Cập nhật selected project để hiển thị thông tin mới nhất
-            setSelectedProject(updatedProject);
-
-            toast.success('Project updated successfully!');
-
-            // Phần code gọi API thực tế - đang comment để sử dụng mockdata
-
             const token = localStorage.getItem('access_token');
             if (!token) {
                 throw new Error('No authentication token found');
+            }
+
+            // Đảm bảo updatedProject có id
+            if (!updatedProject.id) {
+                throw new Error('Project ID is required for update');
             }
 
             const response = await fetch(`${API_URL}${updatedProject.id}/`, {
@@ -331,6 +276,7 @@ const Project = () => {
             setSelectedProject(resultProject);
 
             toast.success('Project updated successfully!');
+            setShowProjectDetail(false); // Đóng modal sau khi cập nhật thành công
 
         } catch (err) {
             console.error('Error updating project:', err);
@@ -338,10 +284,52 @@ const Project = () => {
         }
     };
 
+    // Thêm hàm xử lý xóa dự án
+    const handleDeleteProject = async (projectId) => {
+        if (!window.confirm('Are you sure you want to delete this project?')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch(`${API_URL}${projectId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete project');
+            }
+
+            // Cập nhật danh sách dự án sau khi xóa
+            setProjects(prevProjects => prevProjects.filter(project => project.id !== projectId));
+            toast.success('Project deleted successfully!');
+
+        } catch (err) {
+            console.error('Error deleting project:', err);
+            toast.error(`Failed to delete project: ${err.message}`);
+        }
+    };
+
     // Handler for time filter changes
     const handleTimeFilterChange = (selectedFilter) => {
         setTimeFilter(selectedFilter);
         // You can add additional logic here to filter projects by time if needed
+    };
+
+    // Thêm hàm xử lý chọn project
+    const handleSelectProject = (project) => {
+        // Lưu project hiện tại vào localStorage
+        localStorage.setItem('currentProject', JSON.stringify(project));
+        // Chuyển hướng đến trang backlog của project
+        navigate(`/backlog/${project.id}`);
     };
 
     return (
@@ -386,15 +374,57 @@ const Project = () => {
                                         <div
                                             key={project.id}
                                             className="project__card"
-                                            onClick={() => handleProjectClick(project)}
+                                            onClick={() => handleSelectProject(project)}
                                         >
                                             <div className="project__card-header">
                                                 <h3 className="project__card-title">{project.name}</h3>
-                                                <span className={`project__card-status project__card-status--${project.status}`}>
-                                                    {project.status === 'active' ? 'Active' :
-                                                        project.status === 'completed' ? 'Completed' :
-                                                            project.status === 'on hold' ? 'On Hold' : 'Cancelled'}
-                                                </span>
+                                                <div className="project__card-actions">
+                                                    <span className={`project__card-status project__card-status--${project.status}`}>
+                                                        {project.status === 'active' ? 'Active' :
+                                                            project.status === 'completed' ? 'Completed' :
+                                                                project.status === 'on hold' ? 'On Hold' : 'Cancelled'}
+                                                    </span>
+                                                    <div className="project__card-action-buttons">
+                                                        <button 
+                                                            className="project__card-action"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleProjectClick(project);
+                                                            }}
+                                                            title="View project details"
+                                                        >
+                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                                                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                            </svg>
+                                                        </button>
+                                                        <button 
+                                                            className="project__card-action"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleProjectClick(project);
+                                                            }}
+                                                            title="Edit project"
+                                                        >
+                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                                                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                            </svg>
+                                                        </button>
+                                                        <button 
+                                                            className="project__card-action project__card-action--delete"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeleteProject(project.id);
+                                                            }}
+                                                            title="Delete project"
+                                                        >
+                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
+                                                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div className="project__card-details">
                                                 <div className="project__card-detail">

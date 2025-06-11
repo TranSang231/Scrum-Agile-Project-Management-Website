@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useProject } from '../../contexts/ProjectContext';
 import '../../assets/styles/pages/backlog/backlog.scss';
 import NavTop from '../../components/layouts/NavTop';
 import NavLeft from '../../components/layouts/NavLeft';
@@ -6,6 +8,9 @@ import BacklogColumn from './BacklogColumn';
 import SprintColumn from './SprintColumn';
 
 const Backlog = () => {
+  const { projectId } = useParams();
+  const { currentProject } = useProject();
+
   const [activeView, setActiveView] = useState('backlog');
   const [timeFilter, setTimeFilter] = useState('This week');
   const [activeSprint] = useState('Sprint 1');
@@ -30,8 +35,13 @@ const Backlog = () => {
           </div>
 
           <div className="backlog__content">
-            <BacklogColumn />
-            <SprintColumn activeSprint="Sprint 1" />
+            <BacklogColumn 
+              projectId={projectId}
+            />
+            <SprintColumn 
+              activeSprint="Sprint 1" 
+              projectId={projectId}
+            />
           </div>
         </div>
       </div>

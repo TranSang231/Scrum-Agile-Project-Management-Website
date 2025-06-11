@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../assets/styles/components/project/createProjectForm.scss';
 import RecentEmails from './RecentEmail';
+import { toast } from 'react-hot-toast';
 
 // Sample user accounts for testing
 const sampleUsers = [
@@ -251,18 +252,28 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const owner = users.find(u => u.email === formData.product_owner_email);
-        const scrum = users.find(u => u.email === formData.scrum_master_email);
+        
+        // Validate required fields
+        if (!formData.name || !formData.start_date || !formData.end_date) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
 
-        // Cập nhật logic xử lý team members
-        const memberIds = formData.team_members
-            .map(member => {
-                const user = users.find(u => u.email === member.email);
-                return user ? { id: user.id, role: member.role } : null;
-            })
-            .filter(Boolean);
+        // Validate dates
+        const startDate = new Date(formData.start_date);
+        const endDate = new Date(formData.end_date);
+        if (endDate < startDate) {
+            toast.error('End date must be after start date');
+            return;
+        }
 
-        // Cập nhật payload để bao gồm giá trị Other khi được chọn
+        // Get current user ID from token
+        const token = localStorage.getItem('access_token');
+        const tokenParts = token.split('.');
+        const tokenPayload = JSON.parse(atob(tokenParts[1]));
+        const currentUserId = tokenPayload.user_id;
+        console.log(currentUserId)
+        // Format project type and domain
         const finalProjectType = formData.project_type === 'other'
             ? `other: ${formData.project_type_other}`
             : formData.project_type;
@@ -271,18 +282,27 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
             ? `other: ${formData.domain_other}`
             : formData.domain;
 
-        const payload = {
+        // Format team members according to ProjectMember model
+        const formattedTeamMembers = formData.team_members.map(member => ({
+            user_email: member.email,
+            role: member.role
+        }));
+
+        // Format clients according to ProjectClient model
+        const formattedClients = formData.clients.map(clientEmail => ({
+            client_email: clientEmail
+        }));
+
+        const projectPayload = {
+            ...formData, // Include all form data including id if it exists
             name: formData.name,
             description: formData.description,
             project_type: finalProjectType,
             goal: formData.goal,
-            client: formData.clients.join(', '),
-            product_owner: owner ? owner.id : null,
+            clients: formattedClients,
             product_owner_email: formData.product_owner_email,
-            scrum_master: scrum ? scrum.id : null,
             scrum_master_email: formData.scrum_master_email,
-            team_members: memberIds,
-            team_members_emails: formData.team_members.map(m => m.email),
+            team_members: formattedTeamMembers,
             start_date: formData.start_date,
             end_date: formData.end_date,
             team_size: formData.team_size,
@@ -291,10 +311,17 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
             domain: finalDomain,
             budget: formData.budget,
             notes: formData.notes,
-            id: formData.id || Date.now() // Giữ nguyên id nếu đang edit, hoặc tạo mới nếu đang create
+            created_by: currentUserId // Add created_by field
         };
 
-        onSubmit(payload);
+        // Remove null or undefined values
+        Object.keys(projectPayload).forEach(key => {
+            if (projectPayload[key] === null || projectPayload[key] === undefined) {
+                delete projectPayload[key];
+            }
+        });
+
+        onSubmit(projectPayload);
         onClose();
     };
 
