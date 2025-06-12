@@ -8,7 +8,7 @@ import NavTop from '../../components/layouts/NavTop.jsx';
 import CreateProjectForm from '../../components/project/CreateProjectForm.jsx';
 import ProjectDetail from '../../components/project/DetailProjectForm.jsx';
 
-const API_URL = "http://localhost:8000/api/projects/"; 
+const API_URL = "http://localhost:8000/api/projects/";
 
 // Tạm thời tạo một đối tượng toast giả
 const toast = {
@@ -89,6 +89,7 @@ const Project = () => {
     const [timeFilter, setTimeFilter] = useState('This week');
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [projects, setProjects] = useState([]);
+    const [allProjects, setAllProjects] = useState([]); // Lưu toàn bộ project để filter client-side
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -110,6 +111,7 @@ const Project = () => {
         try {
             const token = localStorage.getItem('access_token');
             if (!token) {
+                setError('Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.');
                 navigate('/login');
                 return;
             }
@@ -127,6 +129,7 @@ const Project = () => {
             });
 
             if (response.status === 401) {
+                setError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
                 // Token hết hạn, thử refresh token
                 const refreshToken = localStorage.getItem('refresh_token');
                 if (refreshToken) {
@@ -151,33 +154,34 @@ const Project = () => {
             }
 
             if (!response.ok) {
+                setError('Không thể tải danh sách dự án.');
                 throw new Error('Failed to fetch projects');
             }
 
             const data = await response.json();
-            
+
             // Filter projects based on user's role
             const filteredProjects = data.filter(project => {
                 // User is the creator
                 if (project.created_by === currentUserId) return true;
-                
+
                 // User is the product owner
                 if (project.product_owner === currentUserId) return true;
-                
+
                 // User is the scrum master
                 if (project.scrum_master === currentUserId) return true;
-                
+
                 // User is a team member
                 if (project.team_members && project.team_members.includes(currentUserId)) return true;
-                
+
                 return false;
             });
 
-            setProjects(filteredProjects);
+            setAllProjects(filteredProjects); // Lưu tất cả project hợp lệ
+            setProjects(filteredProjects); // Hiển thị mặc định
             setLoading(false);
-
         } catch (err) {
-            setError('Failed to load projects');
+            setError(err.message || 'Đã xảy ra lỗi khi tải dự án.');
             setLoading(false);
             console.error('Error fetching projects:', err);
         }
@@ -185,6 +189,7 @@ const Project = () => {
 
     useEffect(() => {
         fetchProjects();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Xử lý khi người dùng click vào một project card
@@ -204,7 +209,20 @@ const Project = () => {
         try {
             const token = localStorage.getItem('access_token');
             if (!token) {
+                setError('Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.');
                 throw new Error('No authentication token found');
+            }
+            if (!projectData.name || projectData.name.trim() === '') {
+                setError('Tên dự án không được để trống.');
+                throw new Error('Tên dự án không được để trống.');
+            }
+            if (!projectData.start_date || !projectData.end_date) {
+                setError('Vui lòng nhập ngày bắt đầu và ngày kết thúc.');
+                throw new Error('Vui lòng nhập ngày bắt đầu và ngày kết thúc.');
+            }
+            if (new Date(projectData.start_date) > new Date(projectData.end_date)) {
+                setError('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+                throw new Error('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
             }
 
             const response = await fetch(API_URL, {
@@ -218,12 +236,12 @@ const Project = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('API Error:', errorData);
+                setError(errorData.detail || 'Không thể tạo dự án mới.');
                 throw new Error(errorData.detail || 'Failed to create project');
             }
 
             const newProject = await response.json();
-            
+
             // Update the projects list with the new project
             setProjects(prevProjects => [...prevProjects, newProject]);
             setShowCreateForm(false);
@@ -231,8 +249,7 @@ const Project = () => {
             setError(''); // Clear any previous errors
 
         } catch (err) {
-            console.error('Error creating project:', err);
-            setError(err.message || 'Failed to create project');
+            setError(err.message || 'Đã xảy ra lỗi khi tạo dự án.');
             toast.error(`Failed to create project: ${err.message}`);
         }
     };
@@ -242,12 +259,24 @@ const Project = () => {
         try {
             const token = localStorage.getItem('access_token');
             if (!token) {
+                setError('Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.');
                 throw new Error('No authentication token found');
             }
-
-            // Đảm bảo updatedProject có id
             if (!updatedProject.id) {
+                setError('Thiếu ID dự án để cập nhật.');
                 throw new Error('Project ID is required for update');
+            }
+            if (!updatedProject.name || updatedProject.name.trim() === '') {
+                setError('Tên dự án không được để trống.');
+                throw new Error('Tên dự án không được để trống.');
+            }
+            if (!updatedProject.start_date || !updatedProject.end_date) {
+                setError('Vui lòng nhập ngày bắt đầu và ngày kết thúc.');
+                throw new Error('Vui lòng nhập ngày bắt đầu và ngày kết thúc.');
+            }
+            if (new Date(updatedProject.start_date) > new Date(updatedProject.end_date)) {
+                setError('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+                throw new Error('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
             }
 
             const response = await fetch(`${API_URL}${updatedProject.id}/`, {
@@ -261,7 +290,7 @@ const Project = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('API Error:', errorData);
+                setError(errorData.detail || 'Không thể cập nhật dự án.');
                 throw new Error(errorData.detail || 'Failed to update project');
             }
 
@@ -276,10 +305,10 @@ const Project = () => {
             setSelectedProject(resultProject);
 
             toast.success('Project updated successfully!');
-            setShowProjectDetail(false); // Đóng modal sau khi cập nhật thành công
+            // Do NOT close the detail modal here; let it show updated info
 
         } catch (err) {
-            console.error('Error updating project:', err);
+            setError(err.message || 'Đã xảy ra lỗi khi cập nhật dự án.');
             toast.error(`Failed to update project: ${err.message}`);
         }
     };
@@ -289,10 +318,10 @@ const Project = () => {
         if (!window.confirm('Are you sure you want to delete this project?')) {
             return;
         }
-
         try {
             const token = localStorage.getItem('access_token');
             if (!token) {
+                setError('Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.');
                 throw new Error('No authentication token found');
             }
 
@@ -305,6 +334,7 @@ const Project = () => {
             });
 
             if (!response.ok) {
+                setError('Không thể xóa dự án.');
                 throw new Error('Failed to delete project');
             }
 
@@ -313,7 +343,7 @@ const Project = () => {
             toast.success('Project deleted successfully!');
 
         } catch (err) {
-            console.error('Error deleting project:', err);
+            setError(err.message || 'Đã xảy ra lỗi khi xóa dự án.');
             toast.error(`Failed to delete project: ${err.message}`);
         }
     };
@@ -321,7 +351,55 @@ const Project = () => {
     // Handler for time filter changes
     const handleTimeFilterChange = (selectedFilter) => {
         setTimeFilter(selectedFilter);
-        // You can add additional logic here to filter projects by time if needed
+        // Lọc dự án theo filter thời gian
+        if (selectedFilter === 'All time') {
+            setProjects(allProjects);
+            return;
+        }
+        const now = new Date();
+        let start, end;
+        switch (selectedFilter) {
+            case 'Today':
+                start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                end = new Date(start);
+                end.setDate(end.getDate() + 1);
+                break;
+            case 'This week':
+                start = new Date(now);
+                start.setDate(now.getDate() - now.getDay());
+                end = new Date(start);
+                end.setDate(start.getDate() + 7);
+                break;
+            case 'This month':
+                start = new Date(now.getFullYear(), now.getMonth(), 1);
+                end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                break;
+            case 'This quarter': {
+                const quarter = Math.floor(now.getMonth() / 3);
+                start = new Date(now.getFullYear(), quarter * 3, 1);
+                end = new Date(now.getFullYear(), quarter * 3 + 3, 1);
+                break;
+            }
+            case 'This year':
+                start = new Date(now.getFullYear(), 0, 1);
+                end = new Date(now.getFullYear() + 1, 0, 1);
+                break;
+            default:
+                setProjects(allProjects);
+                return;
+        }
+        setProjects(
+            allProjects.filter(project => {
+                const projectStart = new Date(project.start_date);
+                const projectEnd = new Date(project.end_date);
+                // Dự án có thời gian nằm trong khoảng filter
+                return (
+                    (projectStart >= start && projectStart < end) ||
+                    (projectEnd >= start && projectEnd < end) ||
+                    (projectStart <= start && projectEnd >= end)
+                );
+            })
+        );
     };
 
     // Thêm hàm xử lý chọn project
@@ -365,7 +443,17 @@ const Project = () => {
                             {loading ? (
                                 <div>Loading...</div>
                             ) : error ? (
-                                <div className="error-message">{error}</div>
+                                <div className="project__error-message" role="alert" style={{
+                                    background: '#fee2e2',
+                                    color: '#b91c1c',
+                                    border: '1px solid #fca5a5',
+                                    borderRadius: '6px',
+                                    padding: '12px',
+                                    marginBottom: '16px',
+                                    fontWeight: 500,
+                                    textAlign: 'center',
+                                    boxShadow: '0 2px 8px rgba(220,38,38,0.08)'
+                                }}>{error}</div>
                             ) : projects.length === 0 ? (
                                 <div>No projects found</div>
                             ) : (
@@ -382,10 +470,10 @@ const Project = () => {
                                                     <span className={`project__card-status project__card-status--${project.status}`}>
                                                         {project.status === 'active' ? 'Active' :
                                                             project.status === 'completed' ? 'Completed' :
-                                                                project.status === 'on hold' ? 'On Hold' : 'Cancelled'}
+                                                                project.status === 'cancelled' ? 'Cancelled' : project.status}
                                                     </span>
                                                     <div className="project__card-action-buttons">
-                                                        <button 
+                                                        <button
                                                             className="project__card-action"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -398,20 +486,7 @@ const Project = () => {
                                                                 <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                             </svg>
                                                         </button>
-                                                        <button 
-                                                            className="project__card-action"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleProjectClick(project);
-                                                            }}
-                                                            title="Edit project"
-                                                        >
-                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none">
-                                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                                                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                            </svg>
-                                                        </button>
-                                                        <button 
+                                                        <button
                                                             className="project__card-action project__card-action--delete"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();

@@ -154,6 +154,7 @@
 
     &-title {
       cursor: pointer;
+
       &:hover {
         color: #3b82f6;
       }
@@ -164,6 +165,13 @@
     font-size: 18px;
     font-weight: 600;
     color: #334155;
+    max-width: 220px; // hoặc giá trị phù hợp với thiết kế
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
   }
 
   &__card-status {
@@ -180,6 +188,11 @@
     &--completed {
       background-color: #e0f2fe;
       color: #0284c7;
+    }
+
+    &--cancelled {
+      background-color: #fee2e2;
+      color: #dc2626;
     }
   }
 
@@ -202,6 +215,7 @@
   }
 
   &__time-filter {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 8px 12px;
@@ -210,16 +224,67 @@
     cursor: pointer;
     font-size: 14px;
     color: #64748b;
+    background: #fff;
+    min-width: 140px;
+    user-select: none;
+    z-index: 2;
+
+    &-selected {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
 
     &-text {
       margin-right: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 90px;
+      display: inline-block;
     }
 
     &-icon {
       transition: transform 0.2s ease;
-      
-      &:hover {
-        transform: translateY(2px);
+      margin-left: 4px;
+
+      &--open {
+        transform: rotate(180deg);
+      }
+    }
+
+    &-options {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      z-index: 10;
+      margin-top: 4px;
+      padding: 4px 0;
+      animation: fadeIn 0.15s;
+    }
+
+    &-option {
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #334155;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+
+      &:hover,
+      &--active {
+        background: #f1f5f9;
+        color: #2563eb;
+      }
+
+      &--active {
+        font-weight: 600;
       }
     }
   }
@@ -284,5 +349,17 @@
     &__list {
       grid-template-columns: 1fr;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

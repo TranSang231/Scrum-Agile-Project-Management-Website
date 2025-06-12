@@ -1,16 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../assets/styles/components/project/createProjectForm.scss';
 import RecentEmails from './RecentEmail';
-import { toast } from 'react-hot-toast';
 
-// Sample user accounts for testing
-const sampleUsers = [
-    { id: 1, username: 'alice', email: 'alice@example.com' },
-    { id: 2, username: 'bob', email: 'bob@example.com' },
-    { id: 3, username: 'charlie', email: 'charlie@example.com' }
-];
+// Remove: const sampleUsers = [ ... ];
 
-const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUsers }) => {
+const CreateProjectForm = ({ onClose, onSubmit, project = null }) => {
     // Xác định xem đang là Edit hay Create mode
     const isEditMode = !!project;
 
@@ -62,6 +56,7 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
     });
 
     const [formData, setFormData] = useState(getInitialFormData());
+    const [error, setError] = useState('');
 
     // Khởi tạo formData từ project khi component được mount hoặc project thay đổi
     useEffect(() => {
@@ -89,7 +84,7 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
             // Process team members
             let teamMembers = [];
             if (project.team_members_emails && project.team_members_emails.length > 0) {
-                teamMembers = project.team_members_emails.map((email, index) => {
+                teamMembers = project.team_members_emails.map(email => {
                     const memberInfo = project.team_members && project.team_members.find(m => m.email === email);
                     return {
                         email,
@@ -186,7 +181,6 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
     const STATUS_OPTIONS = [
         { value: 'active', label: 'Active' },
         { value: 'completed', label: 'Completed' },
-        { value: 'on hold', label: 'On Hold' },
         { value: 'cancelled', label: 'Cancelled' }
     ];
 
@@ -252,18 +246,30 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        // Validate required fields
-        if (!formData.name || !formData.start_date || !formData.end_date) {
-            toast.error('Please fill in all required fields');
+        // Kiểm tra dữ liệu đầu vào cơ bản
+        if (!formData.name || formData.name.trim() === '') {
+            setError('Tên dự án không được để trống.');
             return;
         }
-
+        if (!formData.start_date || !formData.end_date) {
+            setError('Vui lòng nhập ngày bắt đầu và ngày kết thúc.');
+            return;
+        }
+        if (new Date(formData.start_date) > new Date(formData.end_date)) {
+            setError('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+            return;
+        }
+        setError('');
+        // Validate required fields
+        if (!formData.name || !formData.start_date || !formData.end_date) {
+            setError('Vui lòng điền đầy đủ các trường bắt buộc.');
+            return;
+        }
         // Validate dates
         const startDate = new Date(formData.start_date);
         const endDate = new Date(formData.end_date);
         if (endDate < startDate) {
-            toast.error('End date must be after start date');
+            setError('Ngày kết thúc phải sau ngày bắt đầu.');
             return;
         }
 
@@ -321,8 +327,12 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
             }
         });
 
-        onSubmit(projectPayload);
-        onClose();
+        try {
+            onSubmit(projectPayload);
+            onClose();
+        } catch (err) {
+            setError(err.message || 'Đã xảy ra lỗi khi gửi dữ liệu dự án.');
+        }
     };
 
     // Cập nhật handleRecentEmailSelect để thêm role cho team members
@@ -726,6 +736,22 @@ const CreateProjectForm = ({ onClose, onSubmit, project = null, users = sampleUs
                         <label className="create-project-form__label">Notes</label>
                         <textarea name="notes" value={formData.notes} onChange={handleChange} className="create-project-form__textarea" rows="3" />
                     </div>
+
+                    {error && (
+                        <div className="create-project-form__error-message" role="alert" style={{
+                            background: '#fee2e2',
+                            color: '#b91c1c',
+                            border: '1px solid #fca5a5',
+                            borderRadius: '6px',
+                            padding: '12px',
+                            marginBottom: '16px',
+                            fontWeight: 500,
+                            textAlign: 'center',
+                            boxShadow: '0 2px 8px rgba(220,38,38,0.08)'
+                        }}>
+                            {error}
+                        </div>
+                    )}
 
                     <div className="create-project-form__actions">
                         <button type="button" className="create-project-form__cancel" onClick={onClose}>Cancel</button>
