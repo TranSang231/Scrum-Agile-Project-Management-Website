@@ -4,8 +4,16 @@ import '../../assets/styles/components/project/detailProjectForm.scss';
 
 const ProjectDetail = ({ project, onClose, onUpdate }) => {
     const [isEditMode, setIsEditMode] = useState(false);
+    const [error, setError] = useState('');
 
-    if (!project) return null; // Không render nếu không có dữ liệu dự án
+    // Bắt lỗi không có dữ liệu dự án
+    if (!project) {
+        return (
+            <div className="project-detail__error-message">
+                Không tìm thấy dữ liệu dự án hoặc dự án không tồn tại.
+            </div>
+        );
+    }
 
     // Nếu đang ở chế độ Edit, hiển thị form chỉnh sửa
     if (isEditMode) {
@@ -13,7 +21,25 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
             <CreateProjectForm
                 project={project}
                 onClose={() => setIsEditMode(false)}
-                onSubmit={onUpdate}
+                onSubmit={async (data) => {
+                    try {
+                        // Kiểm tra dữ liệu đầu vào cơ bản
+                        if (!data.name || data.name.trim() === '') {
+                            throw new Error('Tên dự án không được để trống.');
+                        }
+                        if (!data.start_date || !data.end_date) {
+                            throw new Error('Vui lòng nhập ngày bắt đầu và ngày kết thúc.');
+                        }
+                        if (new Date(data.start_date) > new Date(data.end_date)) {
+                            throw new Error('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+                        }
+                        await onUpdate(data);
+                        setIsEditMode(false);
+                        setError('');
+                    } catch (err) {
+                        setError(err.message || 'Đã xảy ra lỗi khi cập nhật dự án.');
+                    }
+                }}
             />
         );
     }
@@ -21,7 +47,11 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
     // Format dates
     const formatDate = (dateString) => {
         if (!dateString) return '';
-        return new Date(dateString).toLocaleDateString();
+        try {
+            return new Date(dateString).toLocaleDateString();
+        } catch {
+            return 'Ngày không hợp lệ';
+        }
     };
 
     // Format status
@@ -29,7 +59,6 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
         const statusMap = {
             'active': 'Active',
             'completed': 'Completed',
-            'on hold': 'On Hold',
             'cancelled': 'Cancelled'
         };
         return statusMap[status] || status;
@@ -64,7 +93,8 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
         };
         // Xử lý nếu project type chứa "other:"
         if (type && type.startsWith('other:')) {
-            return type.replace('other:', '').trim();
+            const customType = type.replace('other:', '').trim();
+            return customType ? customType : 'Other';
         }
         return typeMap[type] || type;
     };
@@ -89,12 +119,9 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
 
         // Xử lý nếu domain chứa "other:"
         if (domain.toLowerCase().startsWith('other:')) {
-            // Lấy phần sau other: và chuyển sang Capitalize
             const customDomain = domain.substring(6).trim();
             return customDomain ? capitalize(customDomain) : 'Other';
         }
-
-        // Xử lý các domain thông thường từ domainMap
         return domainMap[domain.toLowerCase()] || capitalize(domain);
     };
 
@@ -116,30 +143,36 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
     // Xử lý clients - có thể có nhiều clients
     const getClientList = () => {
         if (!project.client) return [];
-        return project.client.split(',').map(client => client.trim()).filter(Boolean);
+        try {
+            return project.client.split(',').map(client => client.trim()).filter(Boolean);
+        } catch {
+            setError('Lỗi khi xử lý danh sách khách hàng.');
+            return [];
+        }
     };
 
     // Xử lý team members với roles
     const getTeamMembersWithRoles = () => {
-        if (!project.team_members_emails || !project.team_members_emails.length) return [];
-
-        // Kết hợp emails với roles nếu có
-        if (project.team_members && project.team_members.length) {
-            return project.team_members_emails.map((email, index) => {
-                const memberInfo = project.team_members.find(m => m.email === email) ||
-                    (project.team_members[index] ? { role: project.team_members[index].role } : null);
-                return {
-                    email,
-                    role: memberInfo ? memberInfo.role : 'developer' // Mặc định là developer nếu không có role
-                };
-            });
+        if (!project.team_members_emails || !Array.isArray(project.team_members_emails)) return [];
+        try {
+            if (project.team_members && Array.isArray(project.team_members) && project.team_members.length) {
+                return project.team_members_emails.map((email, index) => {
+                    const memberInfo = project.team_members.find(m => m.email === email) ||
+                        (project.team_members[index] ? { role: project.team_members[index].role } : null);
+                    return {
+                        email,
+                        role: memberInfo ? memberInfo.role : 'developer'
+                    };
+                });
+            }
+            return project.team_members_emails.map(email => ({
+                email,
+                role: 'developer'
+            }));
+        } catch {
+            setError('Lỗi khi xử lý danh sách thành viên nhóm.');
+            return [];
         }
-
-        // Nếu không có thông tin role, gán mặc định là developer
-        return project.team_members_emails.map(email => ({
-            email,
-            role: 'developer'
-        }));
     };
 
     const clients = getClientList();
@@ -147,6 +180,22 @@ const ProjectDetail = ({ project, onClose, onUpdate }) => {
 
     return (
         <div className="project-detail">
+            {/* Hiển thị thông báo lỗi nếu có */}
+            {error && (
+                <div className="project-detail__error-message" role="alert" style={{
+                    background: '#fee2e2',
+                    color: '#b91c1c',
+                    border: '1px solid #fca5a5',
+                    borderRadius: '6px',
+                    padding: '12px',
+                    marginBottom: '16px',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    boxShadow: '0 2px 8px rgba(220,38,38,0.08)'
+                }}>
+                    {error}
+                </div>
+            )}
             <div className="project-detail__overlay" onClick={onClose}></div>
             <div className="project-detail__content">
                 <div className="project-detail__header">
