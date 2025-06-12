@@ -119,6 +119,16 @@ const BacklogColumn = ({ projectId, epics, setEpics, handleSaveEpic, handleDelet
         setCreatingEpic(true);
     };
 
+    const handleSaveEpicLocal = async (epicData) => {
+        try {
+            await handleSaveEpic(epicData);  // Gọi hàm từ cha
+            setCreatingEpic(false);          // ✅ Đóng form sau khi thành công
+        } catch (error) {
+            console.error('Error creating epic:', error);
+            // Form vẫn mở để user có thể thử lại
+        }
+    };
+
     // const handleCreateUserStory = () => {
     //     setCreatingUserStory(true);
     // };
@@ -337,7 +347,7 @@ const BacklogColumn = ({ projectId, epics, setEpics, handleSaveEpic, handleDelet
                 {isCreatingEpic && (
                     <EditEpicForm
                         isCreating={true}
-                        onSave={handleSaveEpic}
+                        onSave={handleSaveEpicLocal}
                         onCancel={() => setCreatingEpic(false)}
                         projectId={projectId}
                     />
