@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 import '../../assets/styles/components/epicCard.scss';
 import DropdownMenu from '../DropDownMenu';
 import EditEpicForm from './EditEpicForm';
@@ -6,7 +7,7 @@ import EditUserStoryForm from './EditUserStoryForm';
 import UserStoryCard from './UserStoryCard';
 
 // function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserStory }) {
-function EpicCard({ epic, onEditSave, onDelete}) {
+function EpicCard({ epic, index, onEditSave, onDelete }) {
     const [isEditing, setIsEditing] = useState(false);
     // const [isCreatingUserStory, setIsCreatingUserStory] = useState(false);
     // const [userStories, setUserStories] = useState(epic.user_stories || []);
@@ -53,8 +54,13 @@ function EpicCard({ epic, onEditSave, onDelete}) {
         return new Date(dateString).toLocaleDateString();
     };
 
-    return (
-        <div className="epic-card">
+    const renderEpicContent = (provided, snapshot) => (
+        <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            className={`epic-card ${snapshot.isDragging ? 'epic-card--dragging' : ''}`}
+        >
             <div className="epic-header">
                 <div className="epic-type">EPIC</div>
                 <p className="epic-title">{epic.name}</p>
@@ -126,6 +132,12 @@ function EpicCard({ epic, onEditSave, onDelete}) {
                 </div>
             </div> */}
         </div>
+    );
+
+    return (
+        <Draggable draggableId={epic.id.toString()} index={index}>
+            {renderEpicContent}
+        </Draggable>
     );
 }
 

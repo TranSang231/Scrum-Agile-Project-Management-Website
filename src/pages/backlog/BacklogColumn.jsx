@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { Droppable } from 'react-beautiful-dnd';
 import '../../assets/styles/pages/backlog/backlogColumn.scss';
 import EpicCard from "../../components/backlog/EpicCard";
 import UserStoryCard from "../../components/backlog/UserStoryCard";
@@ -7,13 +8,12 @@ import EditEpicForm from "../../components/backlog/EditEpicForm";
 import EditUserStoryForm from "../../components/backlog/EditUserStoryForm";
 import axios from 'axios';
 
-const BacklogColumn = ({ projectId }) => {
+const BacklogColumn = ({ projectId, epics, setEpics }) => {
     const API_URL = 'http://localhost:8000/api';
     const navigate = useNavigate();
 
     const [isCreatingEpic, setCreatingEpic] = useState(false);
     const [isCreatingUserStory, setCreatingUserStory] = useState(false);
-    const [epics, setEpics] = useState([]);
     const [userStories, setUserStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -275,6 +275,35 @@ const BacklogColumn = ({ projectId }) => {
         }
     };
 
+    const handleEpicMovedToSprint = (epicId) => {
+        // Remove the epic from the backlog
+        setEpics(epics.filter(epic => epic.id !== epicId));
+    };
+
+    const renderEpicList = (provided, snapshot) => (
+        <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`backlog__epic-list ${snapshot.isDraggingOver ? 'backlog__epic-list--dragging-over' : ''}`}
+        >
+            {epics && epics.length > 0 ? (
+                epics.map((epic, index) => (
+                    <EpicCard
+                        key={epic.id}
+                        epic={epic}
+                        index={index}
+                        onEditSave={handleSaveEpic}
+                        onDelete={handleDeleteEpic}
+                        isInSprint={false}
+                    />
+                ))
+            ) : (
+                <div className="no-epics">No epics found</div>
+            )}
+            {provided.placeholder}
+        </div>
+    );
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -315,22 +344,9 @@ const BacklogColumn = ({ projectId }) => {
                     />
                 )}
 
-                <div className="backlog__epic-list">
-                    {epics && epics.length > 0 ? (
-                        epics.map((epic) => (
-                            <EpicCard
-                                key={epic.id}
-                                epic={epic}
-                                onEditSave={handleSaveEpic}
-                                onDelete={handleDeleteEpic}
-                                onSaveUserStory={handleSaveUserStory}
-                                onDeleteUserStory={handleDeleteUserStory}
-                            />
-                        ))
-                    ) : (
-                        <div className="no-epics">No epics found</div>
-                    )}
-                </div>
+                <Droppable droppableId="backlog">
+                    {renderEpicList}
+                </Droppable>
 
                 <div className="backlog__user-story-list">
                     {userStories && userStories.length > 0 ? (

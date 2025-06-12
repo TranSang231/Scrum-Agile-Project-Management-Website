@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { Droppable } from 'react-beautiful-dnd';
 import '../../assets/styles/components/backlog/sprintCard.scss';
 import DropdownMenu from '../DropDownMenu';
-import UserStoryCard from './UserStoryCard';
+import axios from 'axios';
+import EpicCard from './EpicCard';
 
-const SprintCard = ({ sprint, onEdit, onDelete }) => {
+const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [userStories, setUserStories] = useState([]);
+  const API_URL = 'http://localhost:8000/api';
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
@@ -20,7 +24,48 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
     return { text: 'Planned', class: 'status--planned' };
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('sprint-card--drag-over');
+  };
+
+  const handleDragLeave = (e) => {
+    e.currentTarget.classList.remove('sprint-card--drag-over');
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('sprint-card--drag-over');
+    
+    const epicId = e.dataTransfer.getData('epicId');
+    if (epicId) {
+      onDropEpic(epicId, sprint.id);
+    }
+  };
+
   const status = getStatusBadge();
+
+  const renderEpicList = (provided, snapshot) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.droppableProps}
+      className={`sprint-card__epics ${snapshot.isDraggingOver ? 'sprint-card__epics--dragging-over' : ''}`}
+    >
+      {epics && epics.length > 0 ? (
+        epics.map((epic, index) => (
+          <EpicCard
+            key={epic.id}
+            epic={epic}
+            index={index}
+            isInSprint={true}
+          />
+        ))
+      ) : (
+        <div className="no-epics">No epics in this sprint</div>
+      )}
+      {provided.placeholder}
+    </div>
+  );
 
   return (
     <div className="sprint-card">
@@ -83,23 +128,9 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
             </div>
           </div>
 
-          {/* <div className="sprint-card__user-stories">
-            <div className="sprint-card__section-header">
-              <h4 className="sprint-card__section-title">User Stories</h4>
-              <button className="sprint-card__button sprint-card__button--add">
-                + Add User Story
-              </button>
-            </div>
-            <div className="sprint-card__user-stories-list">
-              {sprint.user_stories?.map(userStory => (
-                <UserStoryCard
-                  key={userStory.id}
-                  userStory={userStory}
-                  isInSprint={true}
-                />
-              ))}
-            </div>
-          </div> */}
+          <Droppable droppableId={sprint.id.toString()}>
+            {renderEpicList}
+          </Droppable>
 
           <div className="sprint-card__tasks">
             <div className="sprint-card__section-header">
