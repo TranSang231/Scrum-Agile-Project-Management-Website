@@ -10,13 +10,45 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Kiểm tra token khi component mount
     const token = localStorage.getItem('access_token');
-    const userData = JSON.parse(localStorage.getItem('user_data'));
-    
-    if (token && userData) {
-      setUser(userData);
+    if (token) {
+      fetchUserData(token);
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
+
+  const fetchUserData = async (token) => {
+    try {
+      // 1. Lấy thông tin user từ token
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      
+      // 2. Fetch user profile
+      const response = await axios.get('http://localhost:8000/api/profile/', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (response.data && response.data.length > 0) {
+        const profile = response.data[0];
+        const userData = {
+          id: tokenData.user_id,
+          email: tokenData.email,
+          first_name: profile.user?.first_name || '',
+          last_name: profile.user?.last_name || '',
+          phone_number: profile.phone_number || '',
+          address: profile.address || '',
+          avatar_url: profile.avatar || null,
+          role: 'User' // Mặc định role là User
+        };
+        setUser(userData);
+        localStorage.setItem('user_data', JSON.stringify(userData));
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (email, password) => {
     try {
@@ -27,22 +59,19 @@ export const AuthProvider = ({ children }) => {
       });
       const { access, refresh } = tokenRes.data;
 
-      // 2. Gọi API lấy thông tin user
-      const userRes = await axios.get('http://localhost:8000/api/auth/user/me/', {
-        headers: { Authorization: `Bearer ${access}` }
-      });
-      const { email: userEmail, role } = userRes.data;
-
-      // 3. Lưu vào localStorage
+      // 2. Lưu tokens
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      localStorage.setItem('user_data', JSON.stringify({ email: userEmail, role }));
 
-      setUser({ email: userEmail, role });
+      // 3. Fetch user data
+      await fetchUserData(access);
 
-      return { success: true, role };
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.detail || 'Login failed' };
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Login failed' 
+      };
     }
   };
 
@@ -53,13 +82,39 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshToken = async () => {
+    try {
+      const refresh = localStorage.getItem('refresh_token');
+      if (!refresh) throw new Error('No refresh token');
+
+      const response = await axios.post('http://localhost:8000/api/token/refresh/', {
+        refresh
+      });
+
+      const { access } = response.data;
+      localStorage.setItem('access_token', access);
+      
+      return access;
+    } catch (error) {
+      logout();
+      throw error;
+    }
+  };
+
   const hasRole = (requiredRoles) => {
     if (!user || !user.role) return false;
     return requiredRoles.includes(user.role);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, hasRole }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      logout, 
+      hasRole,
+      refreshToken 
+    }}>
       {children}
     </AuthContext.Provider>
   );
