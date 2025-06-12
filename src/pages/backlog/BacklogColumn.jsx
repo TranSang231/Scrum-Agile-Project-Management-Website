@@ -143,9 +143,10 @@ const BacklogColumn = ({ projectId, epics, setEpics }) => {
                     epicPayload,
                     { headers: getAuthHeader() }
                 );
-                setEpics(epics.map(epic => 
+                setEpics(epics.map(epic =>
                     epic.id === epicData.id ? response.data : epic
                 ));
+                await fetchEpics(); // Đảm bảo đồng bộ lại danh sách
             } else {
                 // Create new epic
                 const response = await axios.post(
@@ -154,6 +155,7 @@ const BacklogColumn = ({ projectId, epics, setEpics }) => {
                     { headers: getAuthHeader() }
                 );
                 setEpics([...epics, response.data]);
+                await fetchEpics(); // Đảm bảo đồng bộ lại danh sách
             }
             setCreatingEpic(false);
         } catch (err) {
@@ -191,7 +193,7 @@ const BacklogColumn = ({ projectId, epics, setEpics }) => {
                     userStoryPayload,
                     { headers: getAuthHeader() }
                 );
-                setUserStories(userStories.map(story => 
+                setUserStories(userStories.map(story =>
                     story.id === userStoryData.id ? response.data : story
                 ));
             } else {

@@ -20,6 +20,20 @@
         overflow-y: auto;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
+        .form-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+
+            h2 {
+                margin: 0;
+                font-size: 20px;
+                font-weight: 600;
+                color: #eab308;
+                text-align: left;
+            }
+        }
+
         .form-group {
             margin-bottom: 20px;
 
@@ -91,4 +105,4 @@
             }
         }
     }
-} 
+}
