@@ -119,9 +119,9 @@ const BacklogColumn = ({ projectId }) => {
         setCreatingEpic(true);
     };
 
-    const handleCreateUserStory = () => {
-        setCreatingUserStory(true);
-    };
+    // const handleCreateUserStory = () => {
+    //     setCreatingUserStory(true);
+    // };
 
     const handleSaveEpic = async (epicData) => {
         try {
@@ -283,7 +283,7 @@ const BacklogColumn = ({ projectId }) => {
             <div className="backlog__column-content">
                 <div className="backlog__column-header">
                     <h2 className="backlog__column-title">Product Backlog</h2>
-                    <div className="backlog__column-actions">
+                    {/* <div className="backlog__column-actions">
                         <button className="backlog__column-button backlog__column-button--icon">
                             <svg className="backlog__column-icon" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -294,7 +294,7 @@ const BacklogColumn = ({ projectId }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                             </svg>
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {isCreatingEpic && (
@@ -355,12 +355,12 @@ const BacklogColumn = ({ projectId }) => {
                 >
                     Create Epic
                 </button>
-                <button
+                {/* <button
                     className="backlog__column-button backlog__column-button--create backlog__column-button--user-story"
                     onClick={handleCreateUserStory}
                 >
                     Create User Story
-                </button>
+                </button> */}
             </div>
         </div>
     );

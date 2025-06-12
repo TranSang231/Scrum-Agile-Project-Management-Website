@@ -5,6 +5,9 @@
     margin-bottom: 16px;
     padding: 16px;
     position: relative;
+    transition: box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
 
     .user-story-header {
         display: flex;
@@ -26,6 +29,14 @@
             font-size: 16px;
             font-weight: 600;
             margin: 0;
+            max-width: 50%;
+            overflow: hidden; 
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-story-dropdown{
+            margin-left: auto;
         }
     }
 
@@ -34,6 +45,10 @@
         font-size: 14px;
         margin-bottom: 12px;
         line-height: 1.5;
+        max-width: 100%;
+        overflow: hidden; 
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .user-story-acceptance-criteria {
@@ -44,6 +59,10 @@
         margin-bottom: 12px;
         padding: 8px;
         line-height: 1.5;
+        max-width: 100%;
+        overflow: hidden; 
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .user-story-footer {
@@ -55,7 +74,8 @@
         border-top: 1px solid #eee;
 
         .user-story-meta {
-            display: flex;
+            display: grid;    
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
             font-size: 12px;
             color: #666;
