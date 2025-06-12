@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { Droppable } from 'react-beautiful-dnd';
 import '../../assets/styles/pages/backlog/backlogColumn.scss';
 import EpicCard from "../../components/backlog/EpicCard";
 import UserStoryCard from "../../components/backlog/UserStoryCard";
@@ -7,13 +8,12 @@ import EditEpicForm from "../../components/backlog/EditEpicForm";
 import EditUserStoryForm from "../../components/backlog/EditUserStoryForm";
 import axios from 'axios';
 
-const BacklogColumn = ({ projectId }) => {
+const BacklogColumn = ({ projectId, epics, setEpics }) => {
     const API_URL = 'http://localhost:8000/api';
     const navigate = useNavigate();
 
     const [isCreatingEpic, setCreatingEpic] = useState(false);
     const [isCreatingUserStory, setCreatingUserStory] = useState(false);
-    const [epics, setEpics] = useState([]);
     const [userStories, setUserStories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -275,6 +275,35 @@ const BacklogColumn = ({ projectId }) => {
         }
     };
 
+    const handleEpicMovedToSprint = (epicId) => {
+        // Remove the epic from the backlog
+        setEpics(epics.filter(epic => epic.id !== epicId));
+    };
+
+    const renderEpicList = (provided, snapshot) => (
+        <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`backlog__epic-list ${snapshot.isDraggingOver ? 'backlog__epic-list--dragging-over' : ''}`}
+        >
+            {epics && epics.length > 0 ? (
+                epics.map((epic, index) => (
+                    <EpicCard
+                        key={epic.id}
+                        epic={epic}
+                        index={index}
+                        onEditSave={handleSaveEpic}
+                        onDelete={handleDeleteEpic}
+                        isInSprint={false}
+                    />
+                ))
+            ) : (
+                <div className="no-epics">No epics found</div>
+            )}
+            {provided.placeholder}
+        </div>
+    );
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -283,7 +312,7 @@ const BacklogColumn = ({ projectId }) => {
             <div className="backlog__column-content">
                 <div className="backlog__column-header">
                     <h2 className="backlog__column-title">Product Backlog</h2>
-                    <div className="backlog__column-actions">
+                    {/* <div className="backlog__column-actions">
                         <button className="backlog__column-button backlog__column-button--icon">
                             <svg className="backlog__column-icon" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -294,7 +323,7 @@ const BacklogColumn = ({ projectId }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                             </svg>
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {isCreatingEpic && (
@@ -315,22 +344,9 @@ const BacklogColumn = ({ projectId }) => {
                     />
                 )}
 
-                <div className="backlog__epic-list">
-                    {epics && epics.length > 0 ? (
-                        epics.map((epic) => (
-                            <EpicCard
-                                key={epic.id}
-                                epic={epic}
-                                onEditSave={handleSaveEpic}
-                                onDelete={handleDeleteEpic}
-                                onSaveUserStory={handleSaveUserStory}
-                                onDeleteUserStory={handleDeleteUserStory}
-                            />
-                        ))
-                    ) : (
-                        <div className="no-epics">No epics found</div>
-                    )}
-                </div>
+                <Droppable droppableId="backlog">
+                    {renderEpicList}
+                </Droppable>
 
                 <div className="backlog__user-story-list">
                     {userStories && userStories.length > 0 ? (
@@ -355,12 +371,12 @@ const BacklogColumn = ({ projectId }) => {
                 >
                     Create Epic
                 </button>
-                <button
+                {/* <button
                     className="backlog__column-button backlog__column-button--create backlog__column-button--user-story"
                     onClick={handleCreateUserStory}
                 >
                     Create User Story
-                </button>
+                </button> */}
             </div>
         </div>
     );

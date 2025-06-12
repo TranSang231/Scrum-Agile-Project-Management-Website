@@ -165,9 +165,9 @@
         white-space: nowrap;
 
         display: flex;
-        align-items: center;     // Căn giữa theo chiều dọc
+        align-items: center; // Căn giữa theo chiều dọc
         justify-content: center; // Căn giữa theo chiều ngang
-        text-align: center; 
+        text-align: center;
     }
 
     &__status {
@@ -185,11 +185,6 @@
             color: #1e40af;
         }
 
-        &--on-hold {
-            background-color: #fef9c3;
-            color: #854d0e;
-        }
-
         &--cancelled {
             background-color: #fee2e2;
             color: #b91c1c;
@@ -202,8 +197,8 @@
         font-weight: 500;
 
         &--low {
-            background-color: #f3f4f6;
-            color: #4b5563;
+            background-color: #e0e7ef; // Nhạt xanh/xám nhẹ
+            color: #2563eb; // Xanh dương đậm
         }
 
         &--medium {

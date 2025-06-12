@@ -81,7 +81,7 @@ function AppRouter() {
             element={
               <ProtectedRoute allowedRoles={['Developer', 'Tester', 'Project Manager']}>
                 <Project />
-              </ProtectedRoute>
+                </ProtectedRoute>
             }
           />
 

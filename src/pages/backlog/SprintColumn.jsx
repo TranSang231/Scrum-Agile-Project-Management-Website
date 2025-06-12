@@ -3,13 +3,13 @@ import React, { useState, useEffect } from "react";
 import CreateSprintForm from "../../components/backlog/createSprintForm.jsx";
 import EditSprintForm from "../../components/backlog/editSprintForm.jsx";
 import SprintCard from "../../components/backlog/SprintCard";
+import EpicCard from "../../components/backlog/EpicCard";
 import axios from 'axios';
 
-const SprintColumn = ({ projectId }) => {
+const SprintColumn = ({ projectId, sprints, setSprints, allEpics }) => {
   const API_URL = 'http://localhost:8000/api';
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [sprints, setSprints] = useState([]);
   const [currentSprint, setCurrentSprint] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,27 +22,6 @@ const SprintColumn = ({ projectId }) => {
     };
   };
 
-  const refreshToken = async () => {
-    try {
-      const refreshToken = localStorage.getItem('refresh_token');
-      if (!refreshToken) {
-        throw new Error('No refresh token');
-      }
-
-      const response = await axios.post(`${API_URL}/token/refresh/`, {
-        refresh: refreshToken
-      });
-
-      localStorage.setItem('access_token', response.data.access);
-      return response.data.access;
-    } catch (error) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
-      throw error;
-    }
-  };
-
   const fetchSprints = async () => {
     try {
       const response = await axios.get(`${API_URL}/sprints/?project=${projectId}`, {
@@ -51,15 +30,6 @@ const SprintColumn = ({ projectId }) => {
       setSprints(response.data);
       setLoading(false);
     } catch (err) {
-      if (err.response?.status === 401) {
-        try {
-          await refreshToken();
-          return fetchSprints();
-        } catch (refreshError) {
-          console.error('Token refresh failed:', refreshError);
-          window.location.href = '/login';
-        }
-      }
       setError('Failed to fetch sprints');
       setLoading(false);
       console.error('Error fetching sprints:', err);
@@ -103,15 +73,6 @@ const SprintColumn = ({ projectId }) => {
       setSprints([...sprints, response.data]);
       setIsCreateModalOpen(false);
     } catch (err) {
-      if (err.response?.status === 401) {
-        try {
-          await refreshToken();
-          return handleCreateSprint(sprintData);
-        } catch (refreshError) {
-          console.error('Token refresh failed:', refreshError);
-          window.location.href = '/login';
-        }
-      }
       console.error('Error creating sprint:', err);
       setError('Failed to create sprint');
     }
@@ -133,15 +94,6 @@ const SprintColumn = ({ projectId }) => {
       setIsEditModalOpen(false);
       setCurrentSprint(null);
     } catch (err) {
-      if (err.response?.status === 401) {
-        try {
-          await refreshToken();
-          return handleSaveSprint(sprintData);
-        } catch (refreshError) {
-          console.error('Token refresh failed:', refreshError);
-          window.location.href = '/login';
-        }
-      }
       console.error('Error updating sprint:', err);
       setError('Failed to update sprint');
     }
@@ -156,19 +108,22 @@ const SprintColumn = ({ projectId }) => {
         );
         setSprints(sprints.filter(sprint => sprint.id !== sprintId));
       } catch (err) {
-        if (err.response?.status === 401) {
-          try {
-            await refreshToken();
-            return handleDeleteSprint(sprintId);
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-            window.location.href = '/login';
-          }
-        }
         console.error('Error deleting sprint:', err);
         setError('Failed to delete sprint');
       }
     }
+  };
+
+  // Get epics for each sprint
+  const getSprintEpics = (sprintId) => {
+    console.log('Filtering epics for sprint:', sprintId);
+    console.log('All epics:', allEpics);
+    const sprintEpics = allEpics.filter(epic => {
+      console.log('Epic sprint:', epic.sprint, 'Sprint ID:', sprintId);
+      return epic.sprint && epic.sprint.toString() === sprintId.toString();
+    });
+    console.log('Filtered epics:', sprintEpics);
+    return sprintEpics;
   };
 
   if (loading) return <div>Loading...</div>;
@@ -184,14 +139,19 @@ const SprintColumn = ({ projectId }) => {
       </button>
 
       <div className="sprint__container">
-        {sprints.map(sprint => (
-          <SprintCard
-            key={sprint.id}
-            sprint={sprint}
-            onEdit={handleEditSprint}
-            onDelete={handleDeleteSprint}
-          />
-        ))}
+        {sprints.map(sprint => {
+          const sprintEpics = getSprintEpics(sprint.id);
+          console.log(`Sprint ${sprint.id} epics:`, sprintEpics);
+          return (
+            <SprintCard
+              key={sprint.id}
+              sprint={sprint}
+              epics={sprintEpics}
+              onEdit={handleEditSprint}
+              onDelete={handleDeleteSprint}
+            />
+          );
+        })}
       </div>
 
       <CreateSprintForm 

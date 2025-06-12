@@ -96,28 +96,46 @@
     }
 
     &--add {
-      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: #f1f5fd;
       color: #3b82f6;
       border: 1px solid #3b82f6;
+      transition: background 0.2s, color 0.2s;
 
       &:hover {
-        background: #eff6ff;
+        background: #2563eb;
+        color: #fff;
       }
     }
   }
 
   &__content {
     padding: 16px;
+
+    &--dragging-over {
+      background-color: rgba(0, 0, 0, 0.05);
+      border: 2px dashed #007bff;
+    }
   }
 
   &__info {
+    display: grid;
     margin-bottom: 24px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.6fr);
   }
 
   &__dates {
     display: flex;
     gap: 24px;
-    margin-bottom: 16px;
+    // margin-bottom: 16px;
+    padding: 12px;
   }
 
   &__date {
@@ -140,6 +158,7 @@
     background: #f9fafb;
     padding: 12px;
     border-radius: 6px;
+    max-width: 90%;
 
     &-title {
       font-size: 14px;
@@ -153,6 +172,10 @@
       color: #4b5563;
       margin: 0;
       line-height: 1.5;
+      max-width: 100%;
+      overflow: hidden;
+      text-emphasis: ellipsis;
+      white-space: nowrap;
     }
   }
 
@@ -276,6 +299,22 @@
     border: 2px dashed #4a90e2;
     background-color: rgba(74, 144, 226, 0.1);
   }
+
+  &--drag-over {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 2px dashed #007bff;
+  }
+
+  &__epics {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    min-height: 100px;
+    transition: background-color 0.2s ease;
+
+    &--dragging-over {
+      background-color: rgba(0, 123, 255, 0.1);
+    }
+  }
 }
 
 // Add styles for draggable user stories
@@ -288,5 +327,44 @@
 
   &.dragging {
     opacity: 0.5;
+  }
+}
+
+.epic-card {
+  &--in-sprint {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    margin-bottom: 0.5rem;
+  }
+
+  &--dragging {
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transform: rotate(2deg);
+  }
+
+  &__button {
+    &--remove {
+      background-color: transparent;
+      border: none;
+      color: #dc3545;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+
+      &:hover {
+        color: #c82333;
+      }
+    }
+  }
+}
+
+.backlog__epic-list {
+  min-height: 100px;
+  padding: 0.5rem;
+  transition: background-color 0.2s ease;
+
+  &--dragging-over {
+    background-color: rgba(0, 123, 255, 0.1);
   }
 } 
