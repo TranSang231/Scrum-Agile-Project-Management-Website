@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext } from '@hello-pangea/dnd';
 import { useProject } from '../../contexts/ProjectContext';
 import '../../assets/styles/pages/backlog/backlog.scss';
 import NavTop from '../../components/layouts/NavTop';

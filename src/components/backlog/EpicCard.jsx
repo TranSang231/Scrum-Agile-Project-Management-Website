@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import '../../assets/styles/components/epicCard.scss';
 import DropdownMenu from '../DropDownMenu';
 import EditEpicForm from './EditEpicForm';
@@ -7,7 +7,7 @@ import EditUserStoryForm from './EditUserStoryForm';
 import UserStoryCard from './UserStoryCard';
 
 // function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserStory }) {
-function EpicCard({ epic, index, onEditSave, onDelete }) {
+function EpicCard({ epic, index, onEditSave, onDelete, showAddTaskButton }) {
     const [isEditing, setIsEditing] = useState(false);
     // const [isCreatingUserStory, setIsCreatingUserStory] = useState(false);
     // const [userStories, setUserStories] = useState(epic.user_stories || []);
@@ -98,6 +98,14 @@ function EpicCard({ epic, index, onEditSave, onDelete }) {
                     onCancel={handleCancelEdit}
                 />
             )}
+
+            <div className="epic-card__section-header">
+                {showAddTaskButton && (
+                <button className="epic-card__button sprint-card__button--add">
+                    + Add Task
+                </button>
+                )}
+            </div>
 
             {/* <div className="epic-user-stories">
                 <div className="epic-user-stories-header">

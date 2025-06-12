@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import '../../assets/styles/pages/backlog/backlogColumn.scss';
 import EpicCard from "../../components/backlog/EpicCard";
 import UserStoryCard from "../../components/backlog/UserStoryCard";
@@ -119,9 +119,9 @@ const BacklogColumn = ({ projectId, epics, setEpics }) => {
         setCreatingEpic(true);
     };
 
-    const handleCreateUserStory = () => {
-        setCreatingUserStory(true);
-    };
+    // const handleCreateUserStory = () => {
+    //     setCreatingUserStory(true);
+    // };
 
     const handleSaveEpic = async (epicData) => {
         try {
@@ -348,7 +348,7 @@ const BacklogColumn = ({ projectId, epics, setEpics }) => {
                     {renderEpicList}
                 </Droppable>
 
-                <div className="backlog__user-story-list">
+                {/* <div className="backlog__user-story-list">
                     {userStories && userStories.length > 0 ? (
                         userStories.map((userStory) => (
                             <UserStoryCard
@@ -361,7 +361,7 @@ const BacklogColumn = ({ projectId, epics, setEpics }) => {
                     ) : (
                         <div className="no-user-stories">No user stories found</div>
                     )}
-                </div>
+                </div> */}
             </div>
 
             <div className="backlog__column-buttons">

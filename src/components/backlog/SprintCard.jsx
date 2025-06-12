@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Droppable } from 'react-beautiful-dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import '../../assets/styles/components/backlog/sprintCard.scss';
 import DropdownMenu from '../DropDownMenu';
 import axios from 'axios';
@@ -55,9 +55,11 @@ const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic 
         epics.map((epic, index) => (
           <EpicCard
             key={epic.id}
+            sprint={sprint}
             epic={epic}
             index={index}
             isInSprint={true}
+            showAddTaskButton={true}
           />
         ))
       ) : (
@@ -133,12 +135,6 @@ const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic 
           </Droppable>
 
           <div className="sprint-card__tasks">
-            <div className="sprint-card__section-header">
-              <h4 className="sprint-card__section-title">Tasks</h4>
-              <button className="sprint-card__button sprint-card__button--add">
-                + Add Task
-              </button>
-            </div>
             <div className="sprint-card__tasks-list">
               {sprint.tasks?.map(task => (
                 <div key={task.id} className="sprint-card__task">

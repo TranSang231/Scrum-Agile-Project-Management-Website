@@ -138,4 +138,40 @@
             gap: 8px;
         }
     }
+
+    &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+  }
+
+  &__button {
+    padding: 6px 12px;
+    margin-left: auto;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &--add {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: #f1f5fd;
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+      transition: background 0.2s, color 0.2s;
+
+      &:hover {
+        background: #2563eb;
+        color: #fff;
+      } 
+    }
+  }
 }
