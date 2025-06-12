@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "../../assets/styles/layouts/navTop.scss"; // Đường dẫn đến file CSS riêng
 import UserAvatar from "../../assets/images/UserAvatar.png"; // Đường dẫn đến hình ảnh người dùng
 import info from "../../assets/images/info.png"; // Đường dẫn đến hình ảnh thông tin
@@ -11,28 +11,51 @@ import logoutIcon from "../../assets/images/logout.png"; // Thêm đường dẫ
 
 const Navtop = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [userData, setUserData] = useState({
+    fullName: '',
+    email: '',
+    avatarUrl: UserAvatar,
+    role: 'User'
+  });
   
-  // Username có thể lấy từ API
-  const userName = "User_name"; // Đây là tên mẫu
-  
-  // Nếu có react-router-dom, hãy bỏ comment dòng này
-  //const navigate = useNavigate();
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/user-profile/', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          const profile = data[0];
+          setUserData({
+            fullName: profile.full_name || '',
+            email: profile.email || '',
+            avatarUrl: profile.avatar_url || UserAvatar,
+            role: profile.role || 'User'
+          });
+        }
+      } else {
+        console.error('Failed to fetch user profile');
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
   
   const handleProfile = () => {
-    console.log('Navigating to profile page');
-    // Nếu có react-router-dom:
-    //navigate('/profile');
-    // Hoặc có thể dùng:
     window.location.href = '/profile';
   };
   
   const handleLogout = () => {
-    console.log('Logging out...');
-    // Thêm logic đăng xuất tại đây
-    // Nếu có react-router-dom:
-    // navigate('/login');
-    // Hoặc có thể dùng:
-    //window.location.href = '/login';
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   };
   
   const toggleDropdown = () => {
@@ -73,18 +96,18 @@ const Navtop = () => {
         
         <div className="user-avatar-container">
           <div className="user-avatar" onClick={toggleDropdown}>
-            <img src={UserAvatar} alt="UserAvatar" />
+            <img src={userData.avatarUrl} alt="UserAvatar" />
           </div>
           
           {showDropdown && (
             <div className="user-dropdown">
               <div className="dropdown-header">
                 <div className="dropdown-user-avatar">
-                  <img src={UserAvatar} alt="UserAvatar" />
+                  <img src={userData.avatarUrl} alt="UserAvatar" />
                 </div>
                 <div className="dropdown-user-info">
-                  <div className="dropdown-username">{userName}</div>
-                  <div className="dropdown-user-role">User</div>
+                  <div className="dropdown-username">{userData.fullName}</div>
+                  <div className="dropdown-user-role">{userData.role}</div>
                 </div>
               </div>
               

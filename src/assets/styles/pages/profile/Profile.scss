@@ -1,0 +1,66 @@
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f6fa;
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  &__container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    .MuiPaper-root {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .MuiTypography-h4 {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .MuiTypography-h5 {
+      color: #34495e;
+      margin-bottom: 4px;
+    }
+
+    .MuiAvatar-root {
+      border: 3px solid #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .MuiTextField-root {
+      background: #fff;
+      
+      &.Mui-disabled {
+        background: #f8f9fa;
+      }
+    }
+
+    .MuiIconButton-root {
+      &.MuiIconButton-colorPrimary {
+        background: #e3f2fd;
+        margin-left: 8px;
+        
+        &:hover {
+          background: #bbdefb;
+        }
+      }
+
+      &.MuiIconButton-colorError {
+        background: #ffebee;
+        
+        &:hover {
+          background: #ffcdd2;
+        }
+      }
+    }
+  }
+} 
