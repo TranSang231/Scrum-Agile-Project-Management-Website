@@ -71,11 +71,13 @@ function EditEpicForm({ epic, onSave, onCancel, isCreating = false, projectId })
             ...prev,
             [name]: value
         }));
-    };
-
-    return (
+    }; return (
         <div className="edit-epic-form">
             <form onSubmit={handleSubmit}>
+                <div className="form-header">
+                    <h2>{isCreating ? 'Create New Epic' : 'Edit Epic'}</h2>
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
                     <input

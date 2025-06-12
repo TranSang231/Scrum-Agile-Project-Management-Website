@@ -1,6 +1,6 @@
 @use "../../components/project/projectForm.scss";
 
-.create-epic-form {
+.edit-epic-form {
     &__overlay {
         @extend %form-overlay;
     }
