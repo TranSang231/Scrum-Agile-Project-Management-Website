@@ -355,12 +355,12 @@ const BacklogColumn = ({ projectId }) => {
                 >
                     Create Epic
                 </button>
-                <button
+                {/* <button
                     className="backlog__column-button backlog__column-button--create backlog__column-button--user-story"
                     onClick={handleCreateUserStory}
                 >
                     Create User Story
-                </button>
+                </button> */}
             </div>
         </div>
     );

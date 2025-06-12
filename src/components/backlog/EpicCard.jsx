@@ -5,10 +5,11 @@ import EditEpicForm from './EditEpicForm';
 import EditUserStoryForm from './EditUserStoryForm';
 import UserStoryCard from './UserStoryCard';
 
-function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserStory }) {
+// function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserStory }) {
+function EpicCard({ epic, onEditSave, onDelete}) {
     const [isEditing, setIsEditing] = useState(false);
-    const [isCreatingUserStory, setIsCreatingUserStory] = useState(false);
-    const [userStories, setUserStories] = useState(epic.user_stories || []);
+    // const [isCreatingUserStory, setIsCreatingUserStory] = useState(false);
+    // const [userStories, setUserStories] = useState(epic.user_stories || []);
 
     const handleDeleteClick = () => {
         onDelete(epic.id);
@@ -28,24 +29,24 @@ function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserSto
         setIsEditing(true);
     }
 
-    const handleCreateUserStory = () => {
-        setIsCreatingUserStory(true);
-    };
+    // const handleCreateUserStory = () => {
+    //     setIsCreatingUserStory(true);
+    // };
 
-    const handleSaveUserStory = (userStoryData) => {
-        const newUserStory = {
-            ...userStoryData,
-            epic: epic.id
-        };
-        onSaveUserStory(newUserStory);
-        setUserStories([...userStories, newUserStory]);
-        setIsCreatingUserStory(false);
-    };
+    // const handleSaveUserStory = (userStoryData) => {
+    //     const newUserStory = {
+    //         ...userStoryData,
+    //         epic: epic.id
+    //     };
+    //     onSaveUserStory(newUserStory);
+    //     setUserStories([...userStories, newUserStory]);
+    //     setIsCreatingUserStory(false);
+    // };
 
-    const handleDeleteUserStory = (userStoryId) => {
-        onDeleteUserStory(userStoryId);
-        setUserStories(userStories.filter(story => story.id !== userStoryId));
-    };
+    // const handleDeleteUserStory = (userStoryId) => {
+    //     onDeleteUserStory(userStoryId);
+    //     setUserStories(userStories.filter(story => story.id !== userStoryId));
+    // };
 
     // Format date
     const formatDate = (dateString) => {
@@ -92,7 +93,7 @@ function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserSto
                 />
             )}
 
-            <div className="epic-user-stories">
+            {/* <div className="epic-user-stories">
                 <div className="epic-user-stories-header">
                     <h3>User Stories</h3>
                     <button 
@@ -123,7 +124,7 @@ function EpicCard({ epic, onEditSave, onDelete, onSaveUserStory, onDeleteUserSto
                         />
                     ))}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
