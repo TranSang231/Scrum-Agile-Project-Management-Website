@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import '../../assets/styles/components/backlog/sprintCard.scss';
 import DropdownMenu from '../DropDownMenu';
-import UserStoryCard from './UserStoryCard';
+import axios from 'axios';
 
 const SprintCard = ({ sprint, onEdit, onDelete }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [userStories, setUserStories] = useState([]);
+  const API_URL = 'http://localhost:8000/api';
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
@@ -20,10 +22,46 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
     return { text: 'Planned', class: 'status--planned' };
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    try {
+      const userStoryData = JSON.parse(e.dataTransfer.getData('application/json'));
+      
+      // Update the user story with the sprint ID
+      const response = await axios.put(
+        `${API_URL}/user-stories/${userStoryData.id}/`,
+        {
+          ...userStoryData,
+          sprint: sprint.id
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Add the user story to the sprint's list
+      setUserStories([...userStories, response.data]);
+    } catch (error) {
+      console.error('Error adding user story to sprint:', error);
+    }
+  };
+
   const status = getStatusBadge();
 
   return (
-    <div className="sprint-card">
+    <div 
+      className="sprint-card"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <div className="sprint-card__header">
         <div className="sprint-card__title">
           <input 
@@ -80,52 +118,20 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
                 <p className="sprint-card__goal-text">{sprint.goal}</p>
               </div>
             )}
-          </div>
 
-          <div className="sprint-card__user-stories">
-            <div className="sprint-card__section-header">
-              <h4 className="sprint-card__section-title">User Stories</h4>
-              <button className="sprint-card__button sprint-card__button--add">
-                + Add User Story
-              </button>
-            </div>
-            <div className="sprint-card__user-stories-list">
-              {sprint.user_stories?.map(userStory => (
-                <UserStoryCard
-                  key={userStory.id}
-                  userStory={userStory}
-                  isInSprint={true}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="sprint-card__tasks">
-            <div className="sprint-card__section-header">
-              <h4 className="sprint-card__section-title">Tasks</h4>
-              <button className="sprint-card__button sprint-card__button--add">
-                + Add Task
-              </button>
-            </div>
-            <div className="sprint-card__tasks-list">
-              {sprint.tasks?.map(task => (
-                <div key={task.id} className="sprint-card__task">
-                  <div className="sprint-card__task-info">
-                    <input type="checkbox" checked={task.is_completed} />
-                    <span className="sprint-card__task-title">{task.title}</span>
-                  </div>
-                  <div className="sprint-card__task-meta">
-                    <span className={`sprint-card__task-status status--${task.status}`}>
-                      {task.status}
-                    </span>
-                    {task.assignee && (
-                      <div className="sprint-card__task-assignee">
-                        {task.assignee.username}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <div className="sprint-card__user-stories">
+              <h4 className="sprint-card__user-stories-title">User Stories</h4>
+              {userStories.length > 0 ? (
+                <ul className="sprint-card__user-stories-list">
+                  {userStories.map(story => (
+                    <li key={story.id} className="sprint-card__user-story">
+                      {story.title}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="sprint-card__no-stories">No user stories in this sprint</p>
+              )}
             </div>
           </div>
         </div>

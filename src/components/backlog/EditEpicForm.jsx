@@ -18,7 +18,8 @@ function EditEpicForm({ epic, onSave, onCancel, isCreating = false, projectId })
                 name: epic.name || '',
                 description: epic.description || '',
                 status: epic.status || 'not_started',
-                project: epic.project || projectId
+                project: epic.project || projectId,
+                created_by: epic.created_by
             });
         }
     }, [epic, projectId]);
@@ -39,7 +40,6 @@ function EditEpicForm({ epic, onSave, onCancel, isCreating = false, projectId })
 
             const epicData = {
                 ...formData,
-                project: projectId,
                 created_by: userId
             };
 
