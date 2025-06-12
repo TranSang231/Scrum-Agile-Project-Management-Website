@@ -6,7 +6,7 @@ import SprintCard from "../../components/backlog/SprintCard";
 import EpicCard from "../../components/backlog/EpicCard";
 import axios from 'axios';
 
-const SprintColumn = ({ projectId, sprints, setSprints, allEpics }) => {
+const SprintColumn = ({ projectId, sprints, setSprints, allEpics, handleSaveEpic, handleDeleteEpic }) => {
   const API_URL = 'http://localhost:8000/api';
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -149,6 +149,8 @@ const SprintColumn = ({ projectId, sprints, setSprints, allEpics }) => {
               epics={sprintEpics}
               onEdit={handleEditSprint}
               onDelete={handleDeleteSprint}
+              handleSaveEpic={handleSaveEpic}
+              handleDeleteEpic={handleDeleteEpic}
             />
           );
         })}

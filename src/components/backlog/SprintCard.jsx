@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import '../../assets/styles/components/backlog/sprintCard.scss';
+import BacklogColumn from "../../pages/backlog/BacklogColumn"
 import DropdownMenu from '../DropDownMenu';
 import axios from 'axios';
 import EpicCard from './EpicCard';
 
-const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic }) => {
+const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic, handleSaveEpic, handleDeleteEpic}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [userStories, setUserStories] = useState([]);
   const API_URL = 'http://localhost:8000/api';
@@ -60,6 +61,8 @@ const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic 
             index={index}
             isInSprint={true}
             showAddTaskButton={true}
+            onEditSave={handleSaveEpic}
+            onDelete={handleDeleteEpic}
           />
         ))
       ) : (
@@ -112,19 +115,19 @@ const SprintCard = ({ sprint, epics, onEdit, onDelete, onDropEpic, onRemoveEpic 
           <div className="sprint-card__info">
             
             <div className="sprint-card__goal">
-              <h4 className="sprint-card__goal-title">Sprint Goal</h4>
+              {/* <h4 className="sprint-card__goal-title">Sprint Goal</h4>
                 {sprint.goal && (
                   <p className="sprint-card__goal-text">{sprint.goal}</p>
-                )}
+                )} */}
             </div>
 
             <div className="sprint-card__dates">
               <div className="sprint-card__date">
-                <span className="sprint-card__date-label">Start:</span>
+                <span className="sprint-card__date-label">Start: </span>
                 <span className="sprint-card__date-value">{formatDate(sprint.start_date)}</span>
               </div>
               <div className="sprint-card__date">
-                <span className="sprint-card__date-label">End:</span>
+                <span className="sprint-card__date-label">End: </span>
                 <span className="sprint-card__date-value">{formatDate(sprint.end_date)}</span>
               </div>
             </div>

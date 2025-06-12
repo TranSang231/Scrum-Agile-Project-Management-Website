@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useProject } from '../../contexts/ProjectContext';
 import '../../assets/styles/pages/backlog/backlog.scss';
@@ -12,6 +12,7 @@ import axios from 'axios';
 const Backlog = () => {
   const { projectId } = useParams();
   const { currentProject } = useProject();
+  const navigate = useNavigate();
   const API_URL = 'http://localhost:8000/api';
 
   const [activeView, setActiveView] = useState('backlog');
@@ -30,6 +31,27 @@ const Backlog = () => {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
+  };
+
+  const refreshToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (!refreshToken) {
+        throw new Error('No refresh token');
+      }
+
+      const response = await axios.post(`${API_URL}/token/refresh/`, {
+        refresh: refreshToken
+      });
+
+      localStorage.setItem('access_token', response.data.access);
+      return response.data.access;
+    } catch (error) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      navigate('/login');
+      throw error;
+    }
   };
 
   const fetchEpics = async () => {
@@ -60,6 +82,80 @@ const Backlog = () => {
       fetchSprints();
     }
   }, [projectId]);
+
+   const handleSaveEpic = async (epicData) => {
+    try {
+      console.log('Saving epic:', epicData);
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        navigate('/login'); 
+        return;
+      }
+
+      const epicPayload = {
+        ...epicData,
+        project: projectId
+      };
+
+      if (epicData.id) {
+        // Update existing epic
+        const response = await axios.put(
+          `${API_URL}/epics/${epicData.id}/`,
+          epicPayload,
+          { headers: getAuthHeader() }
+        );
+        setAllEpics(allEpics.map(epic => 
+          epic.id === epicData.id ? response.data : epic
+        ));
+      } else {
+        // Create new epic
+        const response = await axios.post(
+          `${API_URL}/epics/`,
+          epicPayload,
+          { headers: getAuthHeader() }
+        );
+        setAllEpics([...allEpics, response.data]);
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        try {
+          await refreshToken();
+          return handleSaveEpic(epicData);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          navigate('/login');
+        }
+      }
+      console.error('Error saving epic:', err);
+    }
+  };
+
+  const handleDeleteEpic = async (epicId) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      await axios.delete(
+        `${API_URL}/epics/${epicId}/`,
+        { headers: getAuthHeader() }
+      );
+      setAllEpics(allEpics.filter(epic => epic.id !== epicId));
+    } catch (err) {
+      if (err.response?.status === 401) {
+        try {
+          await refreshToken();
+          return handleDeleteEpic(epicId);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          navigate('/login');
+        }
+      }
+      console.error('Error deleting epic:', err);
+    }
+  };
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
@@ -155,6 +251,8 @@ const Backlog = () => {
                 projectId={projectId}
                 epics={backlogEpics}
                 setEpics={setAllEpics}
+                handleSaveEpic={handleSaveEpic}
+                handleDeleteEpic={handleDeleteEpic}
               />
               <SprintColumn 
                 activeSprint="Sprint 1" 
@@ -162,6 +260,8 @@ const Backlog = () => {
                 sprints={sprints}
                 setSprints={setSprints}
                 allEpics={allEpics}
+                handleSaveEpic={handleSaveEpic}
+                handleDeleteEpic={handleDeleteEpic}
               />
             </div>
           </div>

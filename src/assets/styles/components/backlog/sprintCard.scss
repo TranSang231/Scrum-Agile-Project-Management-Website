@@ -2,7 +2,7 @@
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  // margin-bottom: 16px;
+  margin-bottom: 16px;
   transition: box-shadow 0.2s ease;
 
   &:hover {
@@ -116,8 +116,9 @@
   }
 
   &__content {
-    padding: 16px;
-
+    // padding: 16px;
+    padding: 0 16px;
+    
     &--dragging-over {
       background-color: rgba(0, 0, 0, 0.05);
       border: 2px dashed #007bff;
@@ -125,10 +126,11 @@
   }
 
   &__info {
+    width: 100%;
     display: grid;
-    margin-bottom: 24px;
+    // margin-bottom: 24px;
     grid-template-columns: 1fr 1fr;
-    grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.6fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr);
   }
 
   &__dates {
@@ -139,8 +141,6 @@
   }
 
   &__date {
-    display: flex;
-    flex-direction: column;
     gap: 4px;
   }
 
@@ -155,7 +155,7 @@
   }
 
   &__goal {
-    background: #f9fafb;
+    // background: #f9fafb;
     padding: 12px;
     border-radius: 6px;
     max-width: 90%;
@@ -294,7 +294,7 @@
   }
 
   &__epics {
-    margin-top: 1rem;
+    padding-top: 0;
     padding: 0.5rem;
     min-height: 100px;
     transition: background-color 0.2s ease;

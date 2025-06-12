@@ -17,7 +17,7 @@ function EpicCard({ epic, index, onEditSave, onDelete, showAddTaskButton }) {
         setIsEditing(false);
     }
 
-    const handleSaveEdit = (editedEpic) => {
+    const handleSaveEdit_EpicCard = (editedEpic) => {
         onEditSave(editedEpic);
         setIsEditing(false);
     };
@@ -94,7 +94,7 @@ function EpicCard({ epic, index, onEditSave, onDelete, showAddTaskButton }) {
             {isEditing && (
                 <EditEpicForm
                     epic={epic}
-                    onSave={handleSaveEdit}
+                    onSave={handleSaveEdit_EpicCard}
                     onCancel={handleCancelEdit}
                 />
             )}
