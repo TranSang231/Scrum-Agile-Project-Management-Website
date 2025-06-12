@@ -1,108 +1,109 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "../../assets/styles/layouts/navTop.scss"; // Đường dẫn đến file CSS riêng
 import UserAvatar from "../../assets/images/UserAvatar.png"; // Đường dẫn đến hình ảnh người dùng
 import info from "../../assets/images/info.png"; // Đường dẫn đến hình ảnh thông tin
 import alarm from "../../assets/images/alarm.png"; // Đường dẫn đến hình ảnh thông báo
 import Search from "../../assets/images/search.png"; // Đường dẫn đến hình ảnh tìm kiếm
 import logoutIcon from "../../assets/images/logout.png"; // Thêm đường dẫn đến icon logout
-
-// Nếu có react-router-dom, bỏ comment dòng này
-//import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Navtop = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
   
-  // Username có thể lấy từ API
-  const userName = "User_name"; // Đây là tên mẫu
-  
-  // Nếu có react-router-dom, hãy bỏ comment dòng này
-  //const navigate = useNavigate();
-  
-  const handleProfile = () => {
-    console.log('Navigating to profile page');
-    // Nếu có react-router-dom:
-    //navigate('/profile');
-    // Hoặc có thể dùng:
-    window.location.href = '/profile';
+  const handleProfile = (e) => {
+    e.stopPropagation();
+    navigate('/profile');
+    setShowDropdown(false);
   };
   
-  const handleLogout = () => {
-    console.log('Logging out...');
-    // Thêm logic đăng xuất tại đây
-    // Nếu có react-router-dom:
-    // navigate('/login');
-    // Hoặc có thể dùng:
-    //window.location.href = '/login';
+  const handleLogout = (e) => {
+    e.stopPropagation();
+    logout();
+    navigate('/login');
   };
   
-  const toggleDropdown = () => {
+  const toggleDropdown = (e) => {
+    e.stopPropagation();
     setShowDropdown(!showDropdown);
   };
-  
-  const handleClickOutside = (e) => {
-    if (!e.target.closest('.user-avatar-container')) {
-      setShowDropdown(false);
-    }
-  };
-  
-  React.useEffect(() => {
-    if (showDropdown) {
-      document.addEventListener('click', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
     };
-  }, [showDropdown]);
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  // Hiển thị tên người dùng
+  const displayName = user ? (
+    user.first_name && user.last_name 
+      ? `${user.first_name} ${user.last_name}`
+      : user.email
+  ) : 'Guest';
   
   return (
-    <div className="navbar-top">
-      <div className="search-container">
-        <div className="search-icon">
-          <img src={Search} alt="Search Icon" className="icon-image" />
+    <div className="navtop">
+      <div className="navtop-left">
+        <div className="search-box">
+          <img src={Search} alt="search" />
+          <input type="text" placeholder="Search..." />
         </div>
-        <input type="text" placeholder="Search" className="search-input" />
       </div>
-      
-      <div className="navbar-actions-container">
-        <div className="nav-action">
-          <img src={alarm} alt="noti" className="icon-image" />
+      <div className="navtop-right">
+        <div className="notification">
+          <img src={alarm} alt="notification" />
         </div>
-        <div className="nav-action">
-          <img src={info} alt="info" className="icon-image" />
+        <div className="info">
+          <img src={info} alt="info" />
         </div>
-        
-        <div className="user-avatar-container">
-          <div className="user-avatar" onClick={toggleDropdown}>
-            <img src={UserAvatar} alt="UserAvatar" />
+        <div className="user" ref={dropdownRef}>
+          <div className="user-info" onClick={toggleDropdown}>
+            <img 
+              src={user?.avatar_url || UserAvatar} 
+              alt="user"
+              className="user-avatar"
+            />
+            <span className="user-name">{displayName}</span>
           </div>
-          
           {showDropdown && (
-            <div className="user-dropdown">
-              <div className="dropdown-header">
-                <div className="dropdown-user-avatar">
-                  <img src={UserAvatar} alt="UserAvatar" />
-                </div>
-                <div className="dropdown-user-info">
-                  <div className="dropdown-username">{userName}</div>
-                  <div className="dropdown-user-role">User</div>
-                </div>
-              </div>
-              
-              <div className="dropdown-divider"></div>
-              
-              <button className="dropdown-item" onClick={handleProfile}>
-                <div className="dropdown-item-icon">
-                  <img src={UserAvatar} alt="Profile" className="dropdown-icon-image" />
-                </div>
+            <div className="dropdown">
+              <div 
+                className="dropdown-item" 
+                onClick={handleProfile}
+                role="button"
+                tabIndex={0}
+              >
+                <img 
+                  src={user?.avatar_url || UserAvatar} 
+                  alt="profile"
+                  className="dropdown-avatar"
+                />
                 <span>Profile</span>
-              </button>
-              
-              <button className="dropdown-item" onClick={handleLogout}>
-                <div className="dropdown-item-icon">
-                  <img src={logoutIcon} alt="Logout" className="dropdown-icon-image" />
-                </div>
+              </div>
+              <div 
+                className="dropdown-item" 
+                onClick={handleLogout}
+                role="button"
+                tabIndex={0}
+              >
+                <img 
+                  src={logoutIcon} 
+                  alt="logout"
+                  className="dropdown-icon"
+                />
                 <span>Logout</span>
-              </button>
+              </div>
             </div>
           )}
         </div>
