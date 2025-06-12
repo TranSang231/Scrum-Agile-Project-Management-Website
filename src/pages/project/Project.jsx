@@ -470,7 +470,7 @@ const Project = () => {
                                                     <span className={`project__card-status project__card-status--${project.status}`}>
                                                         {project.status === 'active' ? 'Active' :
                                                             project.status === 'completed' ? 'Completed' :
-                                                            project.status === 'cancelled' ? 'Cancelled' : project.status}
+                                                                project.status === 'cancelled' ? 'Cancelled' : project.status}
                                                     </span>
                                                     <div className="project__card-action-buttons">
                                                         <button

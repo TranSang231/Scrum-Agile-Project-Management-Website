@@ -5,12 +5,18 @@
     padding: 16px;
     margin-bottom: 16px;
     border: 1px solid #e0e0e0;
+    transition: box-shadow 0.2s, border-color 0.2s;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(25, 118, 210, 0.10);
+        border-color: #90caf9;
+    }
 
     .epic-header {
         display: flex;
         align-items: center;
         margin-bottom: 12px;
-        gap: 12px;
+        gap: 16px;
 
         .epic-type {
             background-color: #e3f2fd;
@@ -23,47 +29,72 @@
 
         .epic-title {
             flex: 1;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
             margin: 0;
-            color: #333;
+            color: #222;
+            max-width: 60%;
+            overflow: hidden; 
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .epic-dropdown{
+            margin-left: auto;
         }
     }
 
     .epic-description {
-        color: #666;
-        margin-bottom: 16px;
+        color: #555;
+        margin-bottom: 20px;
         font-size: 14px;
         line-height: 1.5;
+        max-width: 100%;
+        overflow: hidden; 
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .epic-footer {
         display: flex;
         justify-content: space-between;
+        gap: 0;
         align-items: center;
         padding-top: 12px;
         border-top: 1px solid #e0e0e0;
+        min-width: 100%;
 
         .epic-meta {
             display: flex;
-            gap: 12px;
-            font-size: 12px;
+            min-width: 100%;
+            gap: 16px;
+            font-size: 13px;
             color: #666;
 
             .epic-status {
-                background-color: #f5f5f5;
-                padding: 2px 8px;
-                border-radius: 4px;
+                background: #e3f2fd;
+                color: #1976d2;
+                font-weight: 600;
+                padding: 2px 10px;
+                border-radius: 12px;    
             }
 
             .epic-project {
+                font-weight: 500;
                 color: #1976d2;
+            }
+
+            .epic-date{
+                color: #999;
+                font-style: italic;
+                margin-left: auto;
             }
         }
 
         .epic-creator {
             font-size: 12px;
-            color: #666;
+            margin-left: auto;
         }
     }
 

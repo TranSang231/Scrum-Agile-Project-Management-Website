@@ -96,12 +96,21 @@
     }
 
     &--add {
-      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: #f1f5fd;
       color: #3b82f6;
       border: 1px solid #3b82f6;
+      transition: background 0.2s, color 0.2s;
 
       &:hover {
-        background: #eff6ff;
+        background: #2563eb;
+        color: #fff;
       }
     }
   }
@@ -111,13 +120,17 @@
   }
 
   &__info {
+    display: grid;
     margin-bottom: 24px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.6fr);
   }
 
   &__dates {
     display: flex;
     gap: 24px;
-    margin-bottom: 16px;
+    // margin-bottom: 16px;
+    padding: 12px;
   }
 
   &__date {
@@ -140,6 +153,7 @@
     background: #f9fafb;
     padding: 12px;
     border-radius: 6px;
+    max-width: 90%;
 
     &-title {
       font-size: 14px;
@@ -153,6 +167,10 @@
       color: #4b5563;
       margin: 0;
       line-height: 1.5;
+      max-width: 100%;
+      overflow: hidden;
+      text-emphasis: ellipsis;
+      white-space: nowrap;
     }
   }
 

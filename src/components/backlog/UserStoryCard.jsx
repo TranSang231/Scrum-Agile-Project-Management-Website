@@ -34,10 +34,12 @@ function UserStoryCard({ userStory, onEditSave, onDelete }) {
             <div className="user-story-header">
                 <div className="user-story-type">USER STORY</div>
                 <p className="user-story-title">{userStory.title}</p>
-                <DropdownMenu
-                    onEdit={handleEditClick}
-                    onDelete={handleDeleteClick}
-                />
+                <div className="user-story-dropdown">
+                    <DropdownMenu
+                        onEdit={handleEditClick}
+                        onDelete={handleDeleteClick}
+                    />
+                </div>
             </div>
 
             <p className="user-story-description">{userStory.description}</p>
@@ -47,20 +49,20 @@ function UserStoryCard({ userStory, onEditSave, onDelete }) {
                 <div className="user-story-meta">
                     <span className="user-story-priority">Priority: {userStory.priority}</span>
                     <span className="user-story-points">Points: {userStory.story_points}</span>
-                    {userStory.epic && (
+                    {/* {userStory.epic && (
                         <span className="user-story-epic">Epic: {userStory.epic.name}</span>
-                    )}
+                    )} */}
                     <span className="user-story-date">
                         Created: {formatDate(userStory.created_at)}
                     </span>
                 </div>
-                <div className="user-story-creator">
+                {/* <div className="user-story-creator">
                     {userStory.created_by && (
                         <div className="user-story-creator-info">
                             <span>Created by: {userStory.created_by.username}</span>
                         </div>
                     )}
-                </div>
+                </div> */}
             </div>
 
             {isEditing && (

@@ -63,6 +63,13 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
       {isExpanded && (
         <div className="sprint-card__content">
           <div className="sprint-card__info">
+            {sprint.goal && (
+              <div className="sprint-card__goal">
+                <h4 className="sprint-card__goal-title">Sprint Goal</h4>
+                <p className="sprint-card__goal-text">{sprint.goal}</p>
+              </div>
+            )}
+
             <div className="sprint-card__dates">
               <div className="sprint-card__date">
                 <span className="sprint-card__date-label">Start:</span>
@@ -73,16 +80,9 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
                 <span className="sprint-card__date-value">{formatDate(sprint.end_date)}</span>
               </div>
             </div>
-
-            {sprint.goal && (
-              <div className="sprint-card__goal">
-                <h4 className="sprint-card__goal-title">Sprint Goal</h4>
-                <p className="sprint-card__goal-text">{sprint.goal}</p>
-              </div>
-            )}
           </div>
 
-          <div className="sprint-card__user-stories">
+          {/* <div className="sprint-card__user-stories">
             <div className="sprint-card__section-header">
               <h4 className="sprint-card__section-title">User Stories</h4>
               <button className="sprint-card__button sprint-card__button--add">
@@ -98,7 +98,7 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
 
           <div className="sprint-card__tasks">
             <div className="sprint-card__section-header">
