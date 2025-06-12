@@ -82,7 +82,7 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
             </div>
           </div>
 
-          {/* <div className="sprint-card__user-stories">
+          <div className="sprint-card__user-stories">
             <div className="sprint-card__section-header">
               <h4 className="sprint-card__section-title">User Stories</h4>
               <button className="sprint-card__button sprint-card__button--add">
@@ -98,7 +98,7 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
                 />
               ))}
             </div>
-          </div> */}
+          </div>
 
           <div className="sprint-card__tasks">
             <div className="sprint-card__section-header">

@@ -119,9 +119,9 @@ const BacklogColumn = ({ projectId }) => {
         setCreatingEpic(true);
     };
 
-    // const handleCreateUserStory = () => {
-    //     setCreatingUserStory(true);
-    // };
+    const handleCreateUserStory = () => {
+        setCreatingUserStory(true);
+    };
 
     const handleSaveEpic = async (epicData) => {
         try {
@@ -355,12 +355,12 @@ const BacklogColumn = ({ projectId }) => {
                 >
                     Create Epic
                 </button>
-                {/* <button
+                <button
                     className="backlog__column-button backlog__column-button--create backlog__column-button--user-story"
                     onClick={handleCreateUserStory}
                 >
                     Create User Story
-                </button> */}
+                </button>
             </div>
         </div>
     );
