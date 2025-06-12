@@ -23,7 +23,7 @@ const Profile = () => {
   const [userData, setUserData] = useState({
     fullName: '',
     email: '',
-    phone: '',
+    phone_number: '',
     address: '',
     avatarUrl: 'https://ui-avatars.com/api/?name=User&background=random'
   });
@@ -45,20 +45,15 @@ const Profile = () => {
         const data = await response.json();
         if (data && data.length > 0) {
           const profile = data[0];
-          setUserData({
-            fullName: profile.full_name || '',
-            email: profile.email || '',
-            phone: profile.phone || '',
+          const userData = {
+            fullName: user?.first_name + ' ' + user?.last_name || '',
+            email: user?.email || '',
+            phone_number: profile.phone_number || '',
             address: profile.address || '',
-            avatarUrl: profile.avatar_url || 'https://ui-avatars.com/api/?name=User&background=random'
-          });
-          setEditData({
-            fullName: profile.full_name || '',
-            email: profile.email || '',
-            phone: profile.phone || '',
-            address: profile.address || '',
-            avatarUrl: profile.avatar_url || 'https://ui-avatars.com/api/?name=User&background=random'
-          });
+            avatarUrl: profile.avatar || 'https://ui-avatars.com/api/?name=User&background=random'
+          };
+          setUserData(userData);
+          setEditData(userData);
         }
       } else {
         console.error('Failed to fetch user profile');
@@ -82,9 +77,7 @@ const Profile = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
-          full_name: editData.fullName,
-          email: editData.email,
-          phone: editData.phone,
+          phone_number: editData.phone_number,
           address: editData.address,
         }),
       });
@@ -158,9 +151,8 @@ const Profile = () => {
                 <TextField
                   fullWidth
                   label="Họ và tên"
-                  value={isEditing ? editData.fullName : userData.fullName}
-                  onChange={handleChange('fullName')}
-                  disabled={!isEditing}
+                  value={userData.fullName}
+                  disabled={true}
                   margin="normal"
                 />
               </Grid>
@@ -168,9 +160,8 @@ const Profile = () => {
                 <TextField
                   fullWidth
                   label="Email"
-                  value={isEditing ? editData.email : userData.email}
-                  onChange={handleChange('email')}
-                  disabled={!isEditing}
+                  value={userData.email}
+                  disabled={true}
                   margin="normal"
                 />
               </Grid>
@@ -178,8 +169,8 @@ const Profile = () => {
                 <TextField
                   fullWidth
                   label="Số điện thoại"
-                  value={isEditing ? editData.phone : userData.phone}
-                  onChange={handleChange('phone')}
+                  value={isEditing ? editData.phone_number : userData.phone_number}
+                  onChange={handleChange('phone_number')}
                   disabled={!isEditing}
                   margin="normal"
                 />
