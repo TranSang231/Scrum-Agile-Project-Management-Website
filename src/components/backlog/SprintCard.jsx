@@ -63,12 +63,13 @@ const SprintCard = ({ sprint, onEdit, onDelete }) => {
       {isExpanded && (
         <div className="sprint-card__content">
           <div className="sprint-card__info">
-            {sprint.goal && (
-              <div className="sprint-card__goal">
-                <h4 className="sprint-card__goal-title">Sprint Goal</h4>
-                <p className="sprint-card__goal-text">{sprint.goal}</p>
-              </div>
-            )}
+            
+            <div className="sprint-card__goal">
+              <h4 className="sprint-card__goal-title">Sprint Goal</h4>
+                {sprint.goal && (
+                  <p className="sprint-card__goal-text">{sprint.goal}</p>
+                )}
+            </div>
 
             <div className="sprint-card__dates">
               <div className="sprint-card__date">

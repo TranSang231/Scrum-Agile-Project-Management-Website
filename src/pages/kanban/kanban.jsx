@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DragDropContext } from '@hello-pangea/dnd';
 import "../../assets/styles/pages/kanban/kanban.scss";
 import { useParams } from 'react-router-dom';
 import { useProject } from '../../contexts/ProjectContext';
@@ -131,6 +132,40 @@ const Kanban = () => {
     );
   };
 
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+
+    // Nếu kéo trong cùng một cột
+    if (source.droppableId === destination.droppableId) {
+      setColumns(prevColumns =>
+        prevColumns.map(col => {
+          if (col.id !== source.droppableId) return col;
+          const newTasks = Array.from(col.tasks);
+          const [removed] = newTasks.splice(source.index, 1);
+          newTasks.splice(destination.index, 0, removed);
+          return { ...col, tasks: newTasks };
+        })
+      );
+    } else {
+      // Kéo sang cột khác
+      setColumns(prevColumns => {
+        const sourceCol = prevColumns.find(col => col.id === source.droppableId);
+        const destCol = prevColumns.find(col => col.id === destination.droppableId);
+        const sourceTasks = Array.from(sourceCol.tasks);
+        const destTasks = Array.from(destCol.tasks);
+        const [removed] = sourceTasks.splice(source.index, 1);
+        destTasks.splice(destination.index, 0, removed);
+
+        return prevColumns.map(col => {
+          if (col.id === source.droppableId) return { ...col, tasks: sourceTasks };
+          if (col.id === destination.droppableId) return { ...col, tasks: destTasks };
+          return col;
+        });
+      });
+    }
+  };
+
   return (
     <div className="kanban">
       <NavLeft activeView={activeView} setActiveView={setActiveView} />
@@ -148,12 +183,14 @@ const Kanban = () => {
           </div>
 
           {/* Sử dụng KanbanColumn để quản lý cột */}
-          <KanbanColumn
-            columns={columns}
-            setColumns={setColumns}
-            onAddTask={handleAddTask}
-            projectId={projectId}
-          />
+          <DragDropContext onDragEnd={onDragEnd}>
+            <KanbanColumn
+              columns={columns}
+              setColumns={setColumns}
+              onAddTask={handleAddTask}
+              projectId={projectId}
+            />
+          </DragDropContext>
 
           {/* Hiển thị form thêm task */}
           {
