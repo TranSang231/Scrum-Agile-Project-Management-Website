@@ -47,14 +47,22 @@
 
 .nav-action {
   color: $fifthary-color;
-  margin-right: 10px; /* Giảm khoảng cách giữa các icon */
+  margin-right: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px; /* Thêm padding để vùng hover rộng hơn */
-  border-radius: 8px; /* Bo góc đẹp hơn */
-  transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng mượt */
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.user-avatar-container {
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .user-avatar {
@@ -66,18 +74,17 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: background-color 0.3s;
 }
+
 .nav-action:hover {
   background-color: $primary-color;
-  transform: scale(1.05); /* Hover phóng to nhẹ */
+  transform: scale(1.05);
 }
 
-
-.nav-action:hover .user-avatar {
+.user-avatar-container:hover {
   background-color: $primary-color;
+  transform: scale(1.05);
 }
-
 
 .user-avatar img {
   width: 100%;
@@ -90,4 +97,103 @@
   height: 20px;
   object-fit: contain;
 }
- 
+
+/* Cải thiện User Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 270px;
+  background-color: $secondary-color;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba($dark-500, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid $dark-200;
+}
+
+/* Header phần dropdown với tên và ảnh người dùng */
+.dropdown-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  background-color: $dark-100;
+  border-bottom: 1px solid $dark-200;
+}
+
+.dropdown-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 12px;
+  border: 2px solid $dark-100;
+  background-color: $primary-color;
+}
+
+.dropdown-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dropdown-user-info {
+  flex: 1;
+}
+
+.dropdown-username {
+  font-size: 16px;
+  font-weight: 600;
+  color: $thirdary-color;
+  margin-bottom: 2px;
+}
+
+.dropdown-user-role {
+  font-size: 12px;
+  color: $fifthary-color;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: $dark-200;
+  margin: 0;
+}
+
+.dropdown-item {
+  padding: 14px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: $dark-500;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-item-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: $primary-color;
+}
+
+.dropdown-icon-image {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.dropdown-item:hover {
+  background-color: $primary-color;
+  color: $secondary-color;
+}
+
+.dropdown-item:not(:last-child) {
+  border-bottom: 1px solid $dark-100;
+}
